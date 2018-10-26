@@ -1,11 +1,11 @@
-#Dissertation Log#
-##First meeting:##
+# Dissertation Log #
+## First meeting: ##
 
 - Overview of the problems faced by developing countries in Africa where access to reliable information is severly limited. Programs run by the UN are in place to help people in need. A lot of the population is young and has access to social media however their exposure is limited by filter bubbles imposed by operators. Breaking the filter bubbles could prove crucial to delivery of reliant information to deprived regions.
 - Currently, social media operators want to maximise their profits from advertisements by prolonging user sessions. To do so they must present digestible, interesting content to the users. Their sites present information that the user is likely to agree with and like leading to personalized News Feeds where everything is tailored to the user. Information they get might be more relevant, but it's not necessarily as stimulating as content that could be presented if those restrictions weren't in place.
 - Try to break the filter bubble by finding posts with divergent opinions and present it to the users. Check if 1) it's possible to find content which can be stimulating and still partially agree with the user's opinions 2) users are interested in reading opinions that are not "comfortable" but instead challenge the way they think or propose new ideas.
 
-##Second proposal meetin (After first drafts):##
+## Second proposal meetin (After first drafts): ##
 - Will need to work on Ethics Approval form because:
     - My experiments will include controvertial topics
     - I will be studying opinion influencing
@@ -50,7 +50,7 @@
         But I shouldn't worry about that and just press on.
     - Need to leave enough time for the writeup
 
-##Third meeting##
+## Third meeting ##
 - share the log, code and designs
 - papers:
     - send papers I have read and I want to read so we can prioritize them.
@@ -76,7 +76,7 @@ M    - bring designs in
     - start writing at Christmas
     - write the ethics form when you have a prototype
 
-##Corrections from Overseers##
+## Corrections from Overseers ##
 - add calendar dates to the schedule
 - add milestones to each chunk in schedule
 - add ethics acknowledgments
@@ -88,7 +88,7 @@ M    - bring designs in
   - how will I recruit
 - reduce the workload to make the project less agressive $\rightarrow$ I moved creating an SVM and card-sorting evaluation to extensions
 
-##Stage 1: Dataset##
+## Stage 1: Dataset ##
 __Anonymizing the dataset__:
 
 - I'm first using data from the Stanford Twitter Sentiment Corpus. The data is in CSV format. There are two files, training and testing file. The testing file is manually tagged and has queries. The testing file is automatically tagged and has no queries.
@@ -107,7 +107,7 @@ __Parsing loaded data:__
 - I first add whitespace around all punctuation characters which may be appended to a word even though it's not part of it. Do this using regex replacements (to avoid situations like: "I'm ok.How are you?" -> ["i'm", "ok.How", "are", "you?"])
 - This allows me to tokenize words by whitespace. Put them all to lowercase.
 
-###Problems###
+### Problems ###
 - File IO - loading and constructing maps took a long time so I serialized all maps I load often (lexicon, testing/training maps)
 - I kept on getting java.nio.charset.MalformedInputException: Input length = 2 error. This error arises when the reader gets an input that doesn't correspond to the encoding it's using. I fixed it by instead building a BuffferedReader on an InputStreamReader rather than straight from the Files.getBufferedReader(...) because the underlying behaviour of the two when faced with this error is different. The solution is here: https://stackoverflow.com/questions/26268132/all-inclusive-charset-to-avoid-java-nio-charset-malformedinputexception-input
 - The IDs were too large and I had integer overflow
@@ -117,7 +117,7 @@ __Parsing loaded data:__
     - remove all data with neutral sentiment
 
 
-##Schedule##
+## Schedule ##
 
   | Start date  | End date  | Description| Milestones  |  Done? |
   |---|---|-----------------------  |---------|---|
