@@ -1,5 +1,5 @@
 # TwitterSentiment #
-##Part II Project: Sentiment Diversification of Twitter Posts##
+## Part II Project: Sentiment Diversification of Twitter Posts ##
 The purpose of this project is to create an application composed of a __sentiment 
 classifier__ of opinions in Twitter posts ("Tweets") and a __user interface__ which juxtapositions 
 Tweets with sentiment different to the post chosen by the user. The sentiment classifier will evaluate 
