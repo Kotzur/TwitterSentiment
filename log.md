@@ -42,6 +42,12 @@ __Parsing loaded data:__
 ### Problems ###
 - as mentioned above, thresholds could be refined to reflect the frequency of sentiments in the data e.g. if there's more negative training data, it's harder for a post to be classified as possitive because it hasn't encountered many positive words.
 
+## Stage 3: Evaluator ##
+- record accuracy, recall, precision
+
+### Problems ###
+- recall and precision have identical strucutres of calculation. Not to duplicate code, I call the same function on both but switch the order of arguments to make the ratio work. This implementation can be confusing for someone who reads the code and even though I commented it a lot, it's not very intuitive. Might've been a better idea to use a boolean indicator / leave the code duplication in.
+
 ## Meeting notes ##
 ### First meeting: ###
 
