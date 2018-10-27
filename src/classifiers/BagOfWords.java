@@ -38,7 +38,18 @@ public class BagOfWords {
         lexicon = DataPreparation.loadSerializedMap(lexiconFile);
     }
 
+    /**
+     * Run prediction on the given tweets.
+     * If the lexicon hasn't been created, run the necessary steps to do so. Then for every tweet, find its sentiment.
+     * @param tweets messages to be classified
+     * @return map of tweet id to its predicted sentiment.
+     * */
     public HashMap<Integer, Sentiment> runClassifier(HashMap<Integer, String> tweets){
+        if(lexicon.size() == 0){
+            countSentiments();
+            createLexicon();
+        }
+
         HashMap<Integer, Sentiment> predictedSentiments = new HashMap<>();
         for(Map.Entry<Integer, String> entry : tweets.entrySet()){
             predictedSentiments.put(entry.getKey(), predictTweetSentiment(entry.getValue()));
@@ -46,6 +57,12 @@ public class BagOfWords {
         return predictedSentiments;
     }
 
+    /**
+     * Predict sentiment of the given string based on the lexicon.
+     * Calculate the score of a message by calculating the numbers of positive and negative words it contains.
+     * @param tweet string examined.
+     * @return prediction of sentiment for the passed tweet
+     * */
     public Sentiment predictTweetSentiment(String tweet){
         ArrayList<String> tokens = DataPreparation.splitText(tweet);
         int score = 0;
@@ -62,6 +79,10 @@ public class BagOfWords {
         }
     }
 
+    /**
+     * Counts occurances of words in negative and positive texts.
+     * This needs to be run before lexicon building.
+     */
     public void countSentiments(){
         int id;
         String tweet;
@@ -89,6 +110,11 @@ public class BagOfWords {
         }
     }
 
+    /**
+     * Create the lexicon map after the sentiment counting maps are complete.
+     * Based on the maps, the lexicon calculates a score for each word present in the training set and assigns
+     * it a sentiment based on it.
+     */
     public void createLexicon(){
         int posCount;
         int negCount;
@@ -109,6 +135,12 @@ public class BagOfWords {
         // System.out.println("-----");
     }
 
+    /**
+     * Helper function grouping the actions needed whenever a token is added to a map.
+     * Checks whether the item is present in the map and increments its count or initializes it.
+     * @param token item added
+     * @param map data structure added to
+     */
     private void addTokenToMap(String token, HashMap<String, Integer> map){
         if(map.containsKey(token)){
             map.replace(token, map.get(token) + 1);
