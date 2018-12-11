@@ -14,6 +14,7 @@ SENTIMENT_TWEETS_PATH = os.path.join(DATA_DIR, "sentiment_tweets.csv")
 ANONYMOUS_SENTIMENT_TWEETS_PATH = os.path.join(DATA_DIR, "anonymous_sentiment_tweets.csv")
 SMALL_DATASET_PATH = os.path.join(DATA_DIR, "small_dataset.csv")
 MODEL_PATH = os.path.join(DATA_DIR, "nb_model")
+AIRLINE_TWEETS_PATH = os.path.join(DATA_DIR, "airline_tweets.csv")
 
 
 def accuracy(actual, predictions):
@@ -143,6 +144,28 @@ def create_small_dataset():
             writer.writerow({"sentiment": neg[1], "tweet": neg[0]})
         for pos in positive_tweets:
             writer.writerow({"sentiment": pos[1], "tweet": pos[0]})
+
+
+def load_airline_tweets():
+    reviews = []
+    sentiments = []
+    with open(AIRLINE_TWEETS_PATH) as file:
+        tweet_reader = csv.DictReader(file)
+        for row in tweet_reader:
+            sentiments.append(row['airline_sentiment'])
+            reviews.append(row['text'])
+    clean_reviews = []
+    for review, sentiment in zip(reviews, sentiments):
+        if sentiment == "negative":
+            num_sent = 0
+        elif sentiment == "positive":
+            num_sent = 1
+        elif sentiment == "neutral":
+            continue
+        else:
+            "Invalid sentiment type."
+        clean_reviews.append([clean_data(anonymize(review)), num_sent])
+    return clean_reviews
 
 
 def round_robin_split(reviews):
