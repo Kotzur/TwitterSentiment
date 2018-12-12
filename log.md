@@ -1,6 +1,9 @@
 # Dissertation Log #
 
-> WARNING: I'm sorry in advance for the verbal diarrhea that this text is. I write it as I work and to keep track of thoughts so it's very loose in structure.
+## TODO currently on my mind ##
+- Finish 3 more models
+- Create a CLI interface
+- Look into getting Tweets on a chosen hashtag from the API
 
 ## Stage 1: Dataset ##
 __Anonymizing the dataset__:
@@ -47,6 +50,21 @@ __Parsing loaded data:__
 
 ### Problems ###
 - recall and precision have identical strucutres of calculation. Not to duplicate code, I call the same function on both but switch the order of arguments to make the ratio work. This implementation can be confusing for someone who reads the code and even though I commented it a lot, it's not very intuitive. Might've been a better idea to use a boolean indicator / leave the code duplication in.
+
+## Stage 4: Reimplementation ##
+- Switch to Python. I didn't realise we can use script languages for the project so I started it out in Java. Because the project is data based, Python is much more suitable especially that it has all necessary packages for NLP I need.
+- Create 3 classifiers: BoW, NB, SVM. NB and SVM are from sklearn but BoW was implemented by me.
+- Compare all model accuracies and do permutation tests between them to make sure the comparisons are not between models from the same distribution.
+- The best performing model was the NB.
+- Train the NB on the whole sentiment twitter dataset and pickle the model.
+
+## Stage 5: Spectrum ##
+- Create a spectrum for tweets inputed from the most negative to the most positive ones. This is determined by the probability with which the model classifies the Tweet.
+- Load the model from pickle.
+
+### Problems ###
+- I didn't want to retrain the model each time I ran the spectrum so I pickled it after one training and I unpickle it each time I wish to use it. There is a possibility of creating the spectrum with retrained model.
+- The spectrum created didn't seem that good on some random test I've done. Including more information about the tweets such as PoS data, stemming, frequency cut-offs and other NLP sentiment classifcation methods could help with getting better results. These downfalls are strongly related with how refined we can make the model.
 
 ## Meeting notes ##
 ### First meeting: ###
@@ -110,7 +128,7 @@ __Parsing loaded data:__
     - add precision and f-score
     - find out why is there no neutral in training data
 - interface:
-M    - bring designs in
+    - bring designs in
     - write a bit about each
     - highlight main features
     - developing new UI ideas:
@@ -142,10 +160,10 @@ M    - bring designs in
 
   | Start date  | End date  | Description| Milestones  |  Done? |
   |---|---|-----------------------  |---------|---|
-  | 22/10/2018 | 02/11/2018  | Read papers on sentiment analysis, the filter bubble phonomenon and Twitter content suggestion algorithms.  | Background knowledge to start implementation.  |   |
-  | 05/11/2018  | 09/11/2018  | Create 20 designs for the interface. Pre-process data.  | 20 design concepts. Datasets ready.  |   |
-  | 12/11/2018  | 16/11/2018  | Implement bag-of-words classifier. Chose the design.  | Bag-of-words classifier ready.  |   |
-  | 19/11/2018  | 23/11/2018  | Implement Naive Bayes classifier. Perform cross-validation.  | Naive Bayes classifier. Results from model evaluations.  |   |
+  | 22/10/2018 | 02/11/2018  | Read papers on sentiment analysis, the filter bubble phonomenon and Twitter content suggestion algorithms.  | Background knowledge to start implementation.  | More or less |
+  | 05/11/2018  | 09/11/2018  | Create 20 designs for the interface. Pre-process data.  | 20 design concepts. Datasets ready.  | Need to create 8 more designs |
+  | 12/11/2018  | 16/11/2018  | Implement bag-of-words classifier. Chose the design.  | Bag-of-words classifier ready.  | Yes |
+  | 19/11/2018  | 23/11/2018  | Implement Naive Bayes classifier. Perform cross-validation.  | Naive Bayes classifier. Results from model evaluations.  | Yes |
   | 26/11/2018  | 30/11/2018  | Extra time.  |   |   |
   | 03/12/2018  | 10/12/2018  | Learn JavaScript. Create basic interface. Finish the models in case they are not complete.  | Basic interface.  |   |
   | 10/12/2018  | 19/12/2018  | Link the interface with the model.  | Working program ready to use in user studies.  |   |

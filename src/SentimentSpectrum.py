@@ -26,10 +26,3 @@ class SentimentSpectrum(object):
         negatives_sorted = [tweet for _, tweet in sorted(negatives, reverse=True)]
         positives_sorted = [tweet for _, tweet in sorted(positives)]
         return negatives_sorted + positives_sorted
-
-
-spectrum = SentimentSpectrum()
-airline_data = utils.load_airline_tweets()
-print(len(airline_data))
-airline_tweets = [tweet for tweet, _ in airline_data[:10]]
-print(spectrum.create_spectrum(airline_tweets))
