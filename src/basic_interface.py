@@ -21,7 +21,6 @@ def user_choice():
         cli.set_central(cli.get_tweet(choice))
         skip = 0
         cli.print_alternative_views()
-    # TODO: Fix recognizing
     else:
         skip = 0
         cli.set_central(choice)
