@@ -168,6 +168,14 @@ def load_airline_tweets():
     return clean_reviews
 
 
+# TODO: Implement fetching a tweets dataset through Tweet API topic = hashtag.
+def get_dataset(topic):
+    airline_data = load_airline_tweets()[:100]
+    airline_tweets = [tweet for tweet, _ in airline_data]
+    return airline_tweets
+
+
+
 def round_robin_split(reviews):
     ten_splits = []
     for i in range(10):

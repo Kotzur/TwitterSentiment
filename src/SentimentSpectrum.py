@@ -10,6 +10,8 @@ class SentimentSpectrum(object):
         with open(utils.MODEL_PATH, "rb") as file:
             self.classifier = pickle.load(file)
 
+        self.spectrum = []
+
     def build_classifier(self):
         dataset = utils.load_anonymized_sentiment_tweets(small=False)
         classifier = Classifier(unigrams=True, bigrams=True, classifier_type=Type.NB)
@@ -19,10 +21,21 @@ class SentimentSpectrum(object):
         prediction_probabilities = self.classifier.predict_proba(tweets)
         sentiments = self.classifier.predict(tweets)
         confidences = [max(probs) for probs in prediction_probabilities]
-        for sent, review, conf in zip(sentiments, tweets, confidences):
-            print("Sent:", sent, conf, "Review:", review)
         negatives = [[conf, tweet] for sent, tweet, conf in zip(sentiments, tweets, confidences) if sent == 0]
         positives = [[conf, tweet] for sent, tweet, conf in zip(sentiments, tweets, confidences) if sent == 1]
         negatives_sorted = [tweet for _, tweet in sorted(negatives, reverse=True)]
         positives_sorted = [tweet for _, tweet in sorted(positives)]
-        return negatives_sorted + positives_sorted
+        self.spectrum = negatives_sorted + positives_sorted
+
+    def get_alternatives(self, tweet, skip):
+        tweet_sent = self.classifier.predict([tweet])
+        tweet_prob = max(self.classifier.predict_proba([tweet])[0])
+        if tweet_sent == 0:
+            tweet_prob = 1 - tweet_prob
+        total = len(self.spectrum)
+        index = int(total * tweet_prob)
+        step = total // 5
+        offset = skip // 5
+        indecies = [((index + i*step) + offset) % total for i in range(0, 5)]
+        alternatives = [self.spectrum[i] for i in indecies]
+        return alternatives
