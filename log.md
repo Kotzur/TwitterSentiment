@@ -74,7 +74,7 @@ __Parsing loaded data:__
 
 ### Problems ###
 - The initial position can't be calculated in such a straightforward way because the percentage could show its position relative to that sentiment group but the two sentiment groups are concatenated and not necessarily 50/50. A more accurate count would be if we knew the number of positive and negative tweets in the spectrum and place the new tweet relative to that. So I did that.
-
+- I need to learn how to create pull requests to alert my supervisor. I need to have work with branches if I want to do that but I was working in master so far. I'm created a new branch pull-request which is just a dummy into which I will commit a small change which will hopefully be understood by my supervisor.
 ## Meeting notes ##
 ### First meeting: ###
 
