@@ -66,6 +66,15 @@ __Parsing loaded data:__
 - I didn't want to retrain the model each time I ran the spectrum so I pickled it after one training and I unpickle it each time I wish to use it. There is a possibility of creating the spectrum with retrained model.
 - The spectrum created didn't seem that good on some random test I've done. Including more information about the tweets such as PoS data, stemming, frequency cut-offs and other NLP sentiment classifcation methods could help with getting better results. These downfalls are strongly related with how refined we can make the model.
 
+## Step 6: Interface prototype ##
+- CLI for entering tweets and a topic and exploring them.
+- Use the spectrum to find alternative tweets
+- To choose various alternative tweets, I sample the spectrum at 5 even steps.
+- The position of the entered Tweet is determined by its own probability - it shows where on the spectrum it would normally have been.
+
+### Problems ###
+- The initial position can't be calculated in such a straightforward way because the percentage could show its position relative to that sentiment group but the two sentiment groups are concatenated and not necessarily 50/50. A more accurate count would be if we knew the number of positive and negative tweets in the spectrum and place the new tweet relative to that. So I did that.
+
 ## Meeting notes ##
 ### First meeting: ###
 

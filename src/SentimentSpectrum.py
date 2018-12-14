@@ -11,6 +11,8 @@ class SentimentSpectrum(object):
             self.classifier = pickle.load(file)
 
         self.spectrum = []
+        self.neg_count = 0
+        self.pos_count = 0
 
     def build_classifier(self):
         dataset = utils.load_anonymized_sentiment_tweets(small=False)
@@ -26,14 +28,18 @@ class SentimentSpectrum(object):
         negatives_sorted = [tweet for _, tweet in sorted(negatives, reverse=True)]
         positives_sorted = [tweet for _, tweet in sorted(positives)]
         self.spectrum = negatives_sorted + positives_sorted
+        self.neg_count = len(negatives_sorted)
+        self.pos_count = len(positives_sorted)
 
     def get_alternatives(self, tweet, skip):
         tweet_sent = self.classifier.predict([tweet])
         tweet_prob = max(self.classifier.predict_proba([tweet])[0])
+        total = len(self.spectrum)
         if tweet_sent == 0:
             tweet_prob = 1 - tweet_prob
-        total = len(self.spectrum)
-        index = int(total * tweet_prob)
+            index = int(self.neg_count * tweet_prob)
+        else:
+            index = int(self.neg_count + self.pos_count * tweet_prob)
         step = total // 5
         offset = skip // 5
         indecies = [((index + i*step) + offset) % total for i in range(0, 5)]
