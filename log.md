@@ -23,6 +23,8 @@ __Parsing loaded data:__
 
 - I first add whitespace around all punctuation characters which may be appended to a word even though it's not part of it. Do this using regex replacements (to avoid situations like: "I'm ok.How are you?" -> ["i'm", "ok.How", "are", "you?"])
 - This allows me to tokenize words by whitespace. Put them all to lowercase.
+- I combined the two files into one and then performed anonymization once then wrote to a new file not to have to do it again.
+- The number of datapoints is too big for testing and multiple fold running for SVMs so I created a new file with only 10k tweets.
 
 ### Problems ###
 - File IO - loading and constructing maps took a long time so I serialized all maps I load often (lexicon, testing/training maps)

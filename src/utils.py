@@ -18,6 +18,10 @@ AIRLINE_TWEETS_PATH = os.path.join(DATA_DIR, "airline_tweets.csv")
 
 
 def accuracy(actual, predictions):
+    """Calculate and print accuracy and number of guesses.
+    :param actual real classes
+    :param predictions predicted classes
+    """
     true_positive_negative = sum(1 if a == b else 0 for a, b in zip(actual, predictions))
     print(f"correct guesses: {true_positive_negative}")
     print(f"total guesses: {len(predictions)}")
@@ -25,6 +29,14 @@ def accuracy(actual, predictions):
 
 
 def permutation_test(actual_classes, a_predictions, b_predictions):
+    """Perform the permutation test and print its result.
+    The permutation test is a statistical significance test to check whether two models come from significantly
+    different distributions. It works by checking the ratio of mean difference of mean results between models when one
+    of them is (in this case) randomly permuted.
+    :param actual_classes real classes of the predictions.
+    :param a_predictions predictions made by model A
+    :param b_predictions predictions made by model B, the model being compared to A.
+    """
     a_correct = []
     b_correct = []
     for i, actual in enumerate(actual_classes):
@@ -59,6 +71,16 @@ def permutation_test(actual_classes, a_predictions, b_predictions):
 
 
 def sign_test(actual_classes, a_predictions, b_predictions, features):
+    """Perform the sign test and print its results.
+    The sign test is a statistical test checking whether two models come from significantly different distributions. It
+    is performed by calculating the ratio of same and differnet results to their total number. It's a weaker test
+    compared with the permutation test.
+    :param actual_classes real classes for the predictions.
+    :param a_predictions predictions of model A.
+    :param b_predictions predictions of model B, compared to model A.
+    :param features text to be printed when presenting the results.
+    :return sign test results (p value)
+    """
     average_sum_p = 0
     for fold in range(0, len(actual_classes)):
         actual = actual_classes[fold]
@@ -90,6 +112,7 @@ def sign_test(actual_classes, a_predictions, b_predictions, features):
 
 
 def anonymize_sentiment_tweets():
+    """Read the original Stanford sentiment corpus file, anonymize it and write the simplified results to a new file."""
     fieldnames = ['sentiment', 'tweet']
     with open(SENTIMENT_TWEETS_PATH, encoding="utf-8", errors="ignore") as original_file:
         with open(ANONYMOUS_SENTIMENT_TWEETS_PATH, "w") as anonymized_file:
@@ -107,11 +130,15 @@ def anonymize_sentiment_tweets():
                     continue
 
                 tweet = line["text"]
-                tweet = clean_data(anonymize(tweet))
+                tweet = clean_data(tweet)
                 writer.writerow({'sentiment': sent, 'tweet': str(tweet)})
 
 
 def load_anonymized_sentiment_tweets(small=True):
+    """Load the anonymized file with Stanford data.
+    :param small boolean whether to load the big or small dataset version.
+    :return collection of tuples (tweet, sentiment 0 or 1)
+    """
     tweets = []
     sentiments = []
     if small:
@@ -132,6 +159,7 @@ def load_anonymized_sentiment_tweets(small=True):
 
 # The whole dataset is too big for me to run. Create a file of first 5000 pos and 5000 neg tweets.
 def create_small_dataset():
+    """Create the file with only 1000 tweets from the Stanford sentiment corpus."""
     full_dataset = load_anonymized_sentiment_tweets(small=False)
     negative_tweets = [item for item in full_dataset if item[1] == 0][:5000]
     positive_tweets = [item for item in full_dataset if item[1] == 1][:5000]
@@ -147,6 +175,7 @@ def create_small_dataset():
 
 
 def load_airline_tweets():
+    """Load a sentiment dataset of tweets about US airlines."""
     reviews = []
     sentiments = []
     with open(AIRLINE_TWEETS_PATH) as file:
@@ -164,12 +193,18 @@ def load_airline_tweets():
             continue
         else:
             "Invalid sentiment type."
-        clean_reviews.append([clean_data(anonymize(review)), num_sent])
+        clean_reviews.append([clean_data(review), num_sent])
     return clean_reviews
 
 
 # TODO: Implement fetching a tweets dataset through Tweet API topic = hashtag.
 def get_dataset(topic):
+    """Load from Tweeter a set of tweets on a specific topic.
+    Use the topic to query as a hashtag and fetch as many as possible tweets through the Twitter API. Prepare them for
+    processing.
+    :param topic hashtag to search for.
+    :return dataset on the topic ready for processing.
+    """
     airline_data = load_airline_tweets()[:100]
     airline_tweets = [tweet for tweet, _ in airline_data]
     return airline_tweets
@@ -177,6 +212,10 @@ def get_dataset(topic):
 
 
 def round_robin_split(reviews):
+    """Split the dataset inot 10 even folds with the round robin schema.
+    :param reviews dataset to split.
+    :return list of 10 collections of tweets.
+    """
     ten_splits = []
     for i in range(10):
         ten_splits.append([reviews[r] for r in range(len(reviews)) if r % 10 == i])
@@ -184,18 +223,33 @@ def round_robin_split(reviews):
 
 
 def clean_data(text):
+    """Reformat data for processing.
+    Substitute all linebreaks with a whitespace. Surround all punctuation with a whitespace to also treat them as
+    tokens. Finally, anonymize the data.
+    :param text line of text to be cleaned.
+    :return text ready for processing.
+    """
     norm_text = text.lower()
     # Replace breaks with spaces
     norm_text = norm_text.replace('<br />', ' ')
     # Pad punctuation with spaces on both sides
     norm_text = re.sub(r"([\.\",\(\)!\?;:])", " \\1 ", norm_text)
-    return norm_text
+    return anonymize(norm_text)
 
 
 def anonymize(text):
+    """Substitute potentially sensitive information from the tweets.
+    Replace all username mentions with '@USERNAME' and all hyperlinks with 'HTTP'.
+    :param text tweet to anonymize.
+    :return text with substitutions.
+    """
     text = re.sub("(http:[^\s\n\r]+)", "HTTP", text)
     return re.sub("@\w+", "@USERNAME", text)
 
 
 def tokenize(text):
+    """Tokenize a text.
+    :param text tweet to tokenize
+    :return list of words in text
+    """
     return [word for word in text.split()]

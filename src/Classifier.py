@@ -10,12 +10,20 @@ import pickle
 
 
 class Type(Enum):
+    """Type enum for classifiers available."""
     BOW = 0
     NB = 1
     SVM = 2
 
 
 def train_bow(train_set):
+    """Bag of Words training algorithm.
+    Count the number of occurences of words in both contexts and create a dictionary which gives the word polarity. It's
+    calculated by adding on positive words and subtracting on negative. Positive scores are thus positive words and vice
+    versa for negative.
+    :param train_set dataset which the words are counted from.
+    :return dictionary of words mapping to sentiment score.
+    """
     positive_tweet_words = [word for line in train_set for word in utils.tokenize(line[0]) if line[1] == 1]
     negative_tweet_words = [word for line in train_set for word in utils.tokenize(line[0]) if line[1] == 0]
     word_sentiment_count = {}
@@ -35,6 +43,14 @@ def train_bow(train_set):
 
 
 def predict_bow(word_count, test):
+    """Predict sentiment for a test dataset using a BoW dictionary.
+    The passed in dictionary is created with the BoW training algorithm and determines the polarity of words. For each
+    test text, all words are looked up in the dictionary and for those present the score is modified by adding or
+    subtracting 1. If the text's final score i 0 or more, it's considered positive.
+    :param word_count dictionary of words to sentiment scores giving their polarities.
+    :param test dataset tested on.
+    :return tuple of real classes and predicted classes of the test dataset.
+    """
     predictions = []
     for review, sentiment in test:
         score = 0
@@ -51,6 +67,15 @@ def predict_bow(word_count, test):
 
 class Classifier:
     def __init__(self, classifier_type=Type.NB, unigrams=True, bigrams=False, presence=True, calibrating=False):
+        """Represents any type of sentiment classifier with configurable settings.
+        The classifier type is one of the Type class enums. For each, the type of tokens considered and the way of counting
+        and testing them can be modified.
+        :param classifier_type Type enum specifying what type of classifier this is.
+        :param unigrams boolean whether unigrams should be counted.
+        :param bigrams boolean whether bigrams should be counted.
+        :param presence boolean whether frequency or the binary presence is counted.
+        :param calibrating boolean whether thsi is meant to be tested on a validation set or not.
+        """
         self.type = classifier_type     # Classifier type (NB or SVM).
         self.calibrating = calibrating  # Test settings on validation set.
         self.unigrams = unigrams        # Use unigrams as features.
@@ -58,6 +83,11 @@ class Classifier:
         self.presence = presence        # Use presence (binary) or frequency as feature count.
 
     def train_classifier(self, train_set):
+        """Train the classifier.
+        Either call the train_bow method or create a pipeline with a CountVectorizer and an sklearn model to fit.
+        :param train_set dataset for training
+        :return model for later classification; In case of BoW, it's a dictionary; Otherwise it's a pipeline.
+        """
         if self.type == Type.BOW:
             return train_bow(train_set)
         else:
@@ -75,6 +105,11 @@ class Classifier:
             return pipeline
 
     def predict(self, classifier, test):
+        """Predict the dataset using the classfier to evaluate it.
+        :param classifier Classifier used for prediction
+        :param test dataset use for evaluation
+        :return real classes and predicted classes for the test dataset.
+        """
         if self.type == Type.BOW:
             actual, predictions = predict_bow(classifier, test)
         else:
@@ -87,6 +122,11 @@ class Classifier:
         return actual, predictions
 
     def classify(self, dataset):
+        """Handle the dataset and use it for evaluating the classifier with either 10-fold cross-validation or the
+        validation set.
+        :param dataset collection of tuples (tweet text, sentiment 0 or 1).
+        :return tuple of collections of real classes and prediction classes for the dataset
+        """
         if not (self.unigrams or self.bigrams):
             print("At least one ngram option must be chosen. Unigrams will be used as default.")
 
@@ -115,6 +155,9 @@ class Classifier:
         return actual, predictions
 
     def train_and_pickle(self, dataset):
+        """Train the classifier with a dataset and pickle it for reuse.
+        :param dataset collection of tuples (tweet text, sentiment 0 or 1).
+        """
         classifier = self.train_classifier(dataset)
         with open(utils.MODEL_PATH, "wb") as file:
             pickle.dump(classifier, file)

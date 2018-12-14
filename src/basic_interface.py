@@ -7,6 +7,7 @@ skip = 0
 
 
 def user_choice():
+    """Handles interface choice interaction."""
     global skip
     choice = cli.prompt().lower()
     if choice == "0":
