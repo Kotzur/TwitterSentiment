@@ -1,9 +1,9 @@
 # Dissertation Log #
 
 ## TODO currently on my mind ##
-- Finish 3 more models
-- Create a CLI interface
 - Look into getting Tweets on a chosen hashtag from the API
+- Gather Tweets on a specific topic (Trump, climate change, positive discrimination, boston red sox, vaccinations)
+- Create a second design.
 
 ## Stage 1: Dataset ##
 __Anonymizing the dataset__:
@@ -18,7 +18,7 @@ __Loading the data:__
 
 - The Tweet IDs used by the dataset are too large for integer values and I didn't want to store them as longs. Since I don't have more than 2^16 datapoints, I gave the Tweets new IDs, just incremental integers in the order they are in the file. Might need to change this approach / revise it if I will need to load tweets from multiple sources.
 - Not to have to perform file IO each time I open the program, I serialized the tweets and sentiments hashmaps and just need to load their bytestream when I run the program. I do this through a method loadSerializedMap which uses a generic to accept any type of map indexed by integers.
-
+x
 __Parsing loaded data:__
 
 - I first add whitespace around all punctuation characters which may be appended to a word even though it's not part of it. Do this using regex replacements (to avoid situations like: "I'm ok.How are you?" -> ["i'm", "ok.How", "are", "you?"])
