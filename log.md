@@ -172,12 +172,12 @@ __Parsing loaded data:__
   | Start date  | End date  | Description| Milestones  |  Done? |
   |---|---|-----------------------  |---------|---|
   | 22/10/2018 | 02/11/2018  | Read papers on sentiment analysis, the filter bubble phonomenon and Twitter content suggestion algorithms.  | Background knowledge to start implementation.  | More or less |
-  | 05/11/2018  | 09/11/2018  | Create 20 designs for the interface. Pre-process data.  | 20 design concepts. Datasets ready.  | Need to create 8 more designs |
+  | 05/11/2018  | 09/11/2018  | Create 20 designs for the interface. Pre-process data.  | 20 design concepts. Datasets ready.  | Yes |
   | 12/11/2018  | 16/11/2018  | Implement bag-of-words classifier. Chose the design.  | Bag-of-words classifier ready.  | Yes |
   | 19/11/2018  | 23/11/2018  | Implement Naive Bayes classifier. Perform cross-validation.  | Naive Bayes classifier. Results from model evaluations.  | Yes |
   | 26/11/2018  | 30/11/2018  | Extra time.  |   |   |
-  | 03/12/2018  | 10/12/2018  | Learn JavaScript. Create basic interface. Finish the models in case they are not complete.  | Basic interface.  |   |
-  | 10/12/2018  | 19/12/2018  | Link the interface with the model.  | Working program ready to use in user studies.  |   |
+  | 03/12/2018  | 10/12/2018  | Learn JavaScript. Create basic interface. Finish the models in case they are not complete.  | Basic interface.  | Yes, but not in JS |
+  | 10/12/2018  | 19/12/2018  | Link the interface with the model.  | Working program ready to use in user studies.  | Yes but only basic. |
   | 26/12/2018  | 05/01/2019  | Write introduction and preparation sections.  | Introduction and Preparation.  |   |
   | 07/01/2019  | 12/01/2019  | Extra time. Make sure all notes are well organized.	  | Clear notes. 	  |   |
   | 14/01/2019  | 18/01/2019  | Design user studies. Recruit subjects for user studies. Use this as buffer time or work on extensions.  | Interview questions and user studies plan. A list of people that will participate in the user studies.  |   |
