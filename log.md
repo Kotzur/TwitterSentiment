@@ -76,6 +76,15 @@ __Parsing loaded data:__
 ### Problems ###
 - The initial position can't be calculated in such a straightforward way because the percentage could show its position relative to that sentiment group but the two sentiment groups are concatenated and not necessarily 50/50. A more accurate count would be if we knew the number of positive and negative tweets in the spectrum and place the new tweet relative to that. So I did that.
 - I need to learn how to create pull requests to alert my supervisor. I need to have work with branches if I want to do that but I was working in master so far. I'm created a new branch pull-request which is just a dummy into which I will commit a small change which will hopefully be understood by my supervisor.
+
+## Step 7: Fetching custom datasets ##
+- I decided to use TwitterSearch API to perform searches on Twitter to find custom topic datasets. I made this decision because it seemed sufficient, easy to use, lightweight and it was written in python.
+- Create a search options which specify to fetch a 100 (max) tweets in english on the passed topic and perform the query.
+
+### Problems ###
+- It turned out after I implemented the script that the API doesn't support the new, longer tweets (they changed from 140 to 280 characters) and display ... in the longer tweets. I haven't yet found a way to fetch them correctly using the API but I did find a way to do it through "raw" requests.
+- The Tweets seemed to come in a much larger number than 100 and they are repeating. I placed them in a hash set to remove the redundant tweets but they still seem to come in a set larger than a 100. I don't exactly know why that is and suspect that the API sends multiple requests when I ask it to fetch search results and then combines them into one. There is sufficient delay between the consecutive requests that new tweets are posted between them.
+
 ## Meeting notes ##
 ### First meeting: ###
 
