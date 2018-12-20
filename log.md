@@ -1,9 +1,8 @@
 # Dissertation Log #
 
 ## TODO currently on my mind ##
-- Look into getting Tweets on a chosen hashtag from the API
+- Choose and create a second design
 - Gather Tweets on a specific topic (Trump, climate change, positive discrimination, boston red sox, vaccinations)
-- Create a second design.
 
 ## Stage 1: Dataset ##
 __Anonymizing the dataset__:

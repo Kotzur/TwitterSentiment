@@ -10,6 +10,8 @@ def user_choice():
     """Handles interface choice interaction."""
     global skip
     choice = cli.prompt().lower()
+    if choice == "":
+        print("Please, input one of the options or a new tweet.")
     if choice == "0":
         sys.exit(0)
     elif choice == "m":

@@ -4,6 +4,7 @@ import os
 import random
 import re
 
+from TwitterSearch import *
 from scipy.stats import binom
 import numpy as np
 
@@ -197,7 +198,7 @@ def load_airline_tweets():
     return clean_reviews
 
 
-# TODO: Implement fetching a tweets dataset through Tweet API topic = hashtag.
+# TODO: Get extended versions of Tweets from the new, longer character standard.
 def get_dataset(topic):
     """Load from Tweeter a set of tweets on a specific topic.
     Use the topic to query as a hashtag and fetch as many as possible tweets through the Twitter API. Prepare them for
@@ -205,10 +206,40 @@ def get_dataset(topic):
     :param topic hashtag to search for.
     :return dataset on the topic ready for processing.
     """
-    airline_data = load_airline_tweets()[:100]
-    airline_tweets = [tweet for tweet, _ in airline_data]
-    return airline_tweets
+    dataset = set([])
+    try:
+        tso = TwitterSearchOrder()
+        tso.set_keywords([topic])
+        tso.add_keyword("tweet_mode:extended")
+        tso.set_language('en')
+        tso.set_include_entities(False)  # and don't give us all those entity information
 
+        c_key = input("Enter customer key")
+        c_secret = input("Enter customer secret")
+        a_token = input("Enter access token")
+        a_token_secret = input("Enter access token secret")
+        ts = TwitterSearch(
+            consumer_key=c_key,
+            consumer_secret=c_secret,
+            access_token=a_token,
+            access_token_secret=a_token_secret
+        )
+
+        iterable = ts.search_tweets_iterable(tso)
+        for i, tweet in enumerate(iterable):
+            clean = clean_data(tweet['text'])
+            if clean.startswith("rt"):
+                tokens = clean.split()[2:]
+                clean = ""
+                for token in tokens:
+                    clean += token + " "
+            if clean not in dataset:
+                dataset.add(clean)
+        print("Dataset length:", len(dataset))
+    except TwitterSearchException as e:  # take care of all those ugly errors if there are some
+        print(e)
+
+    return dataset
 
 
 def round_robin_split(reviews):
@@ -233,7 +264,7 @@ def clean_data(text):
     # Replace breaks with spaces
     norm_text = norm_text.replace('<br />', ' ')
     # Pad punctuation with spaces on both sides
-    norm_text = re.sub(r"([\.\",\(\)!\?;:])", " \\1 ", norm_text)
+    norm_text = re.sub(r"([\.\",\(\)!\?;:(...)])", " \\1 ", norm_text)
     return anonymize(norm_text)
 
 

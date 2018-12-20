@@ -1,0 +1,9 @@
+# PyCharm
+.idea/
+src/__pycache__
+
+# Datasets
+data/
+
+# Virtual environment
+venv/
