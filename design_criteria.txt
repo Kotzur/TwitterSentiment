@@ -1,0 +1,225 @@
+# Ideal Criteria #
+Purpose of the interface: __Exploratory understanding__
+
+- low viscosity, allow for dynamic exploration of ideas and jumping around the spectrum to read various opinions, both agreeing and disagreeing with the user coming from a large sample.
+- high visibility when it comes to message content
+- premature commitment can be present to encourage the user to weigh options and make decisions which tweets they find interesting. Only the last hosen tweet will have an impact though. And there should be an easy mechanism of restarting the exploration.
+- hidden dependencies should be minimised so that content generated is mostly based on the most recent user activities directly. Ideally, however, only previously unseen content would be displayed.
+- no abstraction necessary in terms of defining new ui actions. The UI shoudl have macros to enable easy searching for new content in batches and be able to explore tweets presented without having to restart and input them manually.
+- ideally, low error proneness and role expressiveness unless making mistakes in the design context enhances its exploratory nature (e.g. choosing the wrong option makes the user read something they wouldn't normally)
+- secondary notation is accaptable if necessary but ideally the UI has good enough role-expressiveness it doesn't require it.
+- weak closeness of mapping - abstract the sentiment spectrum and the debate away to have a natural exploration of the content and observe an impact on the user of implicit clash of ideologies. Preferably, the design would be a new way of viewing online content which would move away from the cliche scrolling feed.
+- partial consistency - all opinions are equal but not all messages are. Give more emphasis to popular tweets but give fair representation to all sides of the argument.
+- reduce diffuseness to focus only on messages. Ideally, highlight their keywords to be able to skim through them quickly. This helps fast exploration and creates a more dynamic system.
+- Don't require any hard mental operations caused by the notation but do require hard mental operations when it comes to the message content. Challenge the uder to think about messages presented, question their believes, make them make decisions on what they find more interesting.
+- It would be interesting to include progressive evaluation to give the user some sort of motivation to progress through the search space.
+
+# Design descriptions #
+## Design 1: Rubik's cube ##
+
+- High viscosity: need to restart the cube to get more than 54 tweets. Hard to change the central tweet to an arbitrary text
+- High visibility
+- High premature commitment: the chosen first tweet determines the whole round. To restart exploration, need to restart the progrem.
+- A lot of hidden dependanceis: if you move one row, the columns change and this change is not visible for all sides. A user might be confused how to find a specific tweet they saw.
+- Sufficient abstraction: exploration is done in batch by default. Can generate a new cube by clicking on one of the tiles.
+- Little error proneness but not all errors are recoverable. If a tile is clicked by mistake, it might be impossible to go back to the original one.
+- Mostly self-explanatory: The arrows might be self explanatory but the fact that it's a cube might not be evident from the design.
+- Some secondary notation: the arrows act as an indicator there is possibility to change the tiles. If there's one for each direction, row and column, that becomes quite crowded.
+- Some closeness of mapping: the debate is abstracted away however we have a hint of the spectrum as each sentiment class has a different colour assigned.
+- High consistency: there is an equal number of representative tweets and they're all presented equally (with colour differences)
+- No specific diffuseness techniques other than placing the central message in the centre in a different colour
+- Little hard mental operations: user might need to remember the moves they've done to be able to get back to the original lay out. There's no specific goal outside of just exploration so opinions are not especially challenged.
+- No progressive evaluation.
+
+ ## Design 2: 2D feed ##
+
+- Very low viscosity: a large (potentially unlimited) is possible to explore. changing central tweet is very easy, just scroll to find it and hover over it to explore
+- High visibility, helped by shaded regions outside of the currently explored row and column.
+- Little to no premature commitment: the central feed is set arbitrarily just like in standard twitter. The users can change the tweets displayed by moving horizontally but can quickly return to the original tweet by going back to the centre.
+- No hidden dependancies - changning the row positions doesn't affect columns. Because of the amount of content, it's hard not to repeat it.
+- Sufficient abstraction: exploration is done in batches. There doesn't exist an idea of a central tweet, there's a whole central feed. To change it, the whole program needs to be restarted.
+- Good error-proneness: the program doesn't have many actions other than scrolling and so is very simple to use hence error-prone.
+- Very self-explanatory: The scrolling bars and high level of interactivity when hovering a mouse make the UI very self-explanatory.
+- Little secondary notation: The sliding bar shows possibility of horizontal scroll.
+- High closeness of mapping: the center of the design is a feed just like a standard social media UI. The idea of a spectrum is taken away but the debate is clearly seen as opposing views emerge on the tweet sides.
+- High consistency: There is a random numer of tweets from across the spectrum depending what the Twitter platform provides but all tweets are presented equally.
+- Some diffuseness: The shaded regions surrounding the central tweet allow us to focus on the main column.
+- No hard mental operations.
+- No progressive evaluation.
+
+## Design 3: Topic overview ##
+
+- High viscosity
+- Good visibility: potentially slightly overcrowded
+- High premature commitment: central tweet choice determines the whole ui
+- No hidden dependencies
+- Some abstraction: a whole topic overview is given. To restart, a new central tweet must be entered.
+- Good error-proneness
+- Mostly self-explanatory: the use of the ui is self explanatory as the user is prompted to input the central tweet. Meaning of the ui components isn't obvious though.
+- Some secondary notation: since the ui components are not very self-explanatory, it might be necessary to add text on hover to explain what some object represent.
+- High closeness of mapping: the ui is not a feed however spectrum and debate are still present
+- High consistency: messages of the same sentiment are of the same colour and the layout is symmetrical across the sentiments relating the two sides together.
+- Low diffuseness: the notation carries the ranking and popularity of each ui component projecting its meaning
+- No hard mental operations.
+- No progressive evaluation.
+
+## Design 4: Triangles ##
+
+- High viscosity
+- Mostly good visibility: need to make sure the small messages are clear
+- Some premature commitment: choosing the central tweet determines the search but only the last action matters. The central tweet can be easily reset at all times.
+- No hidden dependencies.
+- Sufficient abstraction.
+- Low error-proneness
+- Mostly self-explanatory: colours and shapes are used to convey the sentiment. It is not evident that the shapes can be clicked and dragged.
+- No secondary notation.
+- Little to no closeness of mapping: concepts of debate and feed are removed, the spectrum is still present but not so explicitly.
+- High consistency.
+- Low diffuseness.
+- No hard mental operations.
+- No progressive evaluation.
+
+## Design 5: Linear sentiment spectrum sliders ##
+
+- High viscosity.
+- Good visibility.
+- No premature commitment.
+- No hidden dependencies.
+- Some abstraction: can't explore in batches. Can easily manipulate the choices but has to do some with sliders.
+- Some error-proneness: if the number of tweets is very high, it can be very high to point exactly to the tweet we'd like. This can however aid exploration.
+- Very self-explanatory.
+- No secondary notation.
+- High closeness of mapping: the three tweets are juxtapositioned relating to a debate, the spectrum is explicitly shown as a linear graph.
+- High consistency.
+- Low diffuseness.
+- No hard mental operations.
+- Some progressive evaluation: the spectrum gives a feeling of progress as you can move along it, going further away from the central opinion.
+
+## Design 6: Circular sliders ##
+
+- High viscosity because can add and remove many sliders, the central message can be quickly changed.
+- Sufficient abstraction.
+- The colours of text corresponding to the sliders make the design more self-explanatory.
+- Secondary notation is used to mark which side of the dial is positive/negative.
+- Abstracts the debate away but works directly with the spectrum.
+
+## Design 7: Dials ##
+
+- Some abstraction: can't explore in batches, but can reset the central message easily.
+- Quite self-explanatory: uses the colour conotations to mean sentiments (red relating to anger and war - negative, green relating to peace and nature - positive). However working with the two dials, what they represent and how they relate to each other might not be evident from the beginning.
+- Hidden dependencies: the right dial is fully dependent on the central message in the left dial.
+
+## Design 8: Graph ##
+
+- Low viscosity: once a graph on a subject has been created, a new topic needs to be chosen to regenerate it.
+- Poor visibility: visibility might be obscured by content overload on the page.
+- Low closeness of mapping
+
+## Design 9: Basic side-by-side ##
+
+- Sufficient abstraction: the exploration is done in groups of tweets, changing the central tweet is straightforward.
+- High closeness of mapping: retaining both debate and spectrum elements.
+- Low diffuseness: the layout and formatting relate the sentiment of the tweet and its relation to the center.
+
+## Desing 10: Slides ##
+
+- Mixed visibility: only the central tweet has good visibility, encouraging interaction
+- Some hidden dependencies: topic chosen determines the sentiment of the tweets which are interleaved in their sentiment which is not explicitly stated.
+- Low closeness of mapping
+- Very self-explanatory: it's a standard ui, making it very approachable to users.
+
+## Design 11: CLI ##
+
+- Low viscosity: the ui allows the user to interact with the whole available dataset and change its content at every step. The degree of freedom this ui options present, makes it the most viscous of designs presented.
+- High visibility: since everything is in text form, everything is clearly visible. Extra spacing and formatting can be added to make it read better.
+- Low premature commitment: there is a possibility to explore tweets depending on previous choices, however at any point the user can switch the topic or input precisely the tweet they'd like to examine.
+- No hidden dependencies.
+- Very high abstraction: the ui facilitates all required and other abstractions, most out of all proposed uis.
+- Low error-proneness: and in case of an error, the user can fall back on the manual tweet entry and go back to the previous output.
+- Very self-explanatory.
+- No secondary notation.
+- Low closeness of mapping: the debate and spectrum are abstracted away.
+- High consistency.
+- Mixed diffuseness: because of the nature of the ui, it's quite verbose and the main prompt repeats after each action to facilitate operation for the user.
+- No hard mental operations.
+- No progressive evaluation.
+
+## Design 12: Tree ##
+
+- High viscosity: once a tree is built, it's hard to change it.
+- Sufficient abstraction.
+- Very high closeness of mapping: the design relies on the ideas of debate and spectrum.
+
+## Design 13: Radio ##
+
+- Low viscosity: it's easy to move betweent the stations and so change the content displayed.
+- Mixed visibility: the tweets come and go, making them hard to read sometimes. The user will have to stay focused to catch all messages displayed.
+- No premature commitment: choice of station is not fixed so exploration is free and there is little premature commitment.
+- Some hidden dependencies: the relation between the station and displayed tweets is not explicit. The change of station will result in a different type of content being displayed but it won't be obvious visually. Some visual cues can be added to aid that, e.g. each station would have its own colour so when the station is switched, messages of new colour show up.
+- Good abstraction: there is no central tweet to change, the exploration is done in batches as new tweets show up.
+- Low error-proneness.
+- Quite self-explanatory: it might not be evident at first sight how the interface works but should be straight forward once interacted with.
+- No secondary notation.
+- No closeness of mapping.
+- High consistency: can maybe introduce slight variation in text formatting between stations and to highligh how influential tweets are. All the stations are however kept overall consistent not to introduce any bias towards them.
+- Low diffuseness.
+- Some hard mental operations: the user must focus to catch all the appearing and disappearing messages. We could turn the design into a game of spotting the tweets which don't fit well with the surrounding messages (as indicated on the design, occasionally misfit tweets which are overall very popular but not on the topic would show up intentionally to keep the user "entertained") which would also give us feedback on how well grouped the messages are. This would also increase interactivity with the user and turning it into a game would give them more incentive to engage and comprehend the messages displayed.
+- No progressive evaluation: unless it's turned into a game, then we could introduce a counter of messages left to be spotted.
+
+## Design 14: Cocktail party ##
+
+- Low viscosity: can easily jump between conversations if some overheard one seems more interesting.
+- Mixed visibility: only the main thread is well visible. The rest is smaller and fading, with the keywords adding extra clarity so that the messages can be quickly skimed over and understood before they disappear.
+- Some hidden dependencies: there is a hidden relation between the central tweets and the ones surrounding it
+- Limited error-proneness: the user could miss a tweet in the background they would be interested in but it disappeared too quickly and there's no way of getting it back. Or the user could have clicked a tweet which actually didn't turn out to be very interesting and would rather go back to their previous converstaion. There is no mechanism planned to do that.
+- Quite self-explanatory: the ui might require some use before it's fully understood by the user.
+- Some hard mental operations: the user must be able to focus on the main conversation whilst they have to also pay attention to the fleeting messages around them.
+
+## Design 15: Debate ##
+
+- High viscosity: once the topic is chosen, the user can't change the tweets that will be presented to them.
+- High visibility: all tweets and subtweets are clearly displayed so the user can make an informed decision which tweet they agree with more.
+- High premature commitment: after choosing the topic, the user is put on a determined track for the whole debate until the end.
+- Some hidden dependencies: the final score is dependent on the choices the user makes during the debate.
+- Sufficient abstraction: the topic exploration is done in batches, there is no idea of a "central" tweet.
+- Limited error-proneness: the user might click on the wrong choice. It would be possible to later add changing of already made choices before the results are shown.
+- Limitly self-explanatory: it might not be obvious what the purpose of the ui is additional information might need to be added to make up for that.
+- Some secondary notation: might need a beginning screen to explain what the purpose of the ui is or have some additional help information along the way to explain what the different parts of the ui are. An ending screen is also necessary to summarise the user's debate performance.
+- Some closeness of mapping: the ui is dependant on debate. There is however no mention of spectrum.
+- High consistency.
+- Low diffuseness: choices made and supporting tweets are set aside by formatting.
+- Hard mental operations: the user has to interact with the interface to progress and get to their final score. The user needs to make up their mind about each pair of tweets presented, also taking into consideration their supporting tweets. Requiring the user to make decisions makes the design one of the most interactive and thought provoking ones from the ones presented here.
+- Some progressive evaluation: the final screen summarizes the user's choices during the debate and gives them a sense of completion. A progress bar can be introduced to mark the remaining number of choice screens.
+
+## Design 16: Quiz ##
+
+- Limited error-proneness: the user can make a wrong choice and there is no way of taking that choice back in the design.
+- Hard mental operations: as in Design 15, the user has to make decisions to progress with the interface. This makes them consider all four opinions and make up their mind on the topic.
+- Included progressive evaluation: progress bars and summation screen encourage the user to keep playing the quiz.
+
+## Design 17: Newpapers ##
+
+- Moderate visibility: the design is packed with information about each collection and each one has many subtitles on it making it possibly hard to read.
+- Some hidden dependencies: it might not be obvious on what basis the collections are grouped.
+- Limited self-explanation: it might be hard to understand what the interface represents especially if the collection groupings don't represent differences between them very well.
+
+## Design 18: Table ##
+
+- High viscosity: once the central tweet has been chosen, it's not possible to explore other messages further than what's presented.
+- Some hidden dependencies: all tweets generated around the circle are dependent on the central tweet. These relations might not be evident and the relation between each representative tweet and its supporting group might also not be clear.
+- low diffuseness: the grouping of different sides is concisely represented by lines dividing the interface into four regions.
+
+## Design 19: Memory ##
+
+- High viscosity: all posts are generated on topic choice.
+- High visibility: every post is its stand alone tile with the image clearly representing it.
+- Sufficient abstraction: exploration is done in batches, having overview of the whole dataset on one screen. There is no concept of the central tweet.
+- Some secondary notation: we might add icons to indicate it's possible to flip every image to reveal its accompanying text.
+
+## Design 20: Gamification ##
+
+- High premature commitment: the game is generated at the moment user makes their topic choice.
+- Some hidden dependencies: each conversation choice corresponds to a score which influences the final result for the game. If enough wrong choices are made, the user might loose.
+- Limited error-proneness: the user can make a wrong choice which they can't take back and possibly loose the game because of. There is also a possibility of the backend algorithm not creating correct results which are consistent with what humans would consider correct results. This would however be consider a fault in implementation.
+- Some secondary notation: the user should receive some simple instructions at the beginning to learn how the game works.
+- Some progressive evaluation: each game has a final checkpoint which gives the user a sense of completion and encourages them to play more.
