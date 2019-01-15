@@ -41,7 +41,7 @@ __Parsing loaded data:__
   2. One hashmap of int (id) to hashmap of sentiment to int (count). hashmap overhead + num of words * (int + hashmap overhead + 2*sentiment + 2*int)
   So solution 1 is cheaper, easier to reason about and use later
 - build lexicon. Use hashmap of string (word) to sentiment. For each word in the overall count, find its positive and negative count and pick the larger one. Could do more work on this to e.g. find better thresholds of assigning a sentiment (if positive sentiment occurance is harder to come by, the threshold should be lower for positive).
-- create assessing method. Given a text, produce its sentiment. Take each word in the text and find its sentiment from lexicon (if there is one). Count which sentiment is seen more often - that's the result. Again, could do more work on the thresholds.
+- create assessing method. Given a text, produce its sentiment. Take each word in the text and find its sentiment from lexicon (if there is one). Count which sentiment is seen most often - that's the result. Again, could do more work on the thresholds.
 
 ### Problems ###
 - as mentioned above, thresholds could be refined to reflect the frequency of sentiments in the data e.g. if there's more negative training data, it's harder for a post to be classified as possitive because it hasn't encountered many positive words.

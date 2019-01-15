@@ -16,6 +16,8 @@ ANONYMOUS_SENTIMENT_TWEETS_PATH = os.path.join(DATA_DIR, "anonymous_sentiment_tw
 SMALL_DATASET_PATH = os.path.join(DATA_DIR, "small_dataset.csv")
 MODEL_PATH = os.path.join(DATA_DIR, "nb_model")
 AIRLINE_TWEETS_PATH = os.path.join(DATA_DIR, "airline_tweets.csv")
+JSON_PATH = os.path.join(DATA_DIR, "spectrum.json")
+TWITTER_ACCESS_PATH = os.path.join(DATA_DIR, "twitter_access")
 
 
 def accuracy(actual, predictions):
@@ -210,14 +212,13 @@ def get_dataset(topic):
     try:
         tso = TwitterSearchOrder()
         tso.set_keywords([topic])
-        tso.add_keyword("tweet_mode:extended")
         tso.set_language('en')
         tso.set_include_entities(False)  # and don't give us all those entity information
 
-        c_key = input("Enter customer key")
-        c_secret = input("Enter customer secret")
-        a_token = input("Enter access token")
-        a_token_secret = input("Enter access token secret")
+        keys = get_twitter_keys()
+        print(keys)
+        c_key, c_secret, a_token, a_token_secret = keys
+
         ts = TwitterSearch(
             consumer_key=c_key,
             consumer_secret=c_secret,
@@ -241,6 +242,19 @@ def get_dataset(topic):
 
     return dataset
 
+
+def get_twitter_keys():
+    keys = []
+    if os.path.isfile(TWITTER_ACCESS_PATH):
+        with open(TWITTER_ACCESS_PATH, "r") as file:
+            keys = file.readlines()
+            keys = [k.replace("\n", "") for k in keys]
+    else:
+        keys.append(input("Enter customer key"))
+        keys.append(input("Enter customer secret"))
+        keys.append(input("Enter access token"))
+        keys.append(input("Enter access token secret"))
+    return keys
 
 def round_robin_split(reviews):
     """Split the dataset inot 10 even folds with the round robin schema.

@@ -2,6 +2,7 @@ import src.utils as utils
 from src.Classifier import Classifier
 from src.Classifier import  Type
 import pickle
+import json
 
 class SentimentSpectrum(object):
     def __init__(self, build_new=False):
@@ -61,3 +62,7 @@ class SentimentSpectrum(object):
         indecies = [((index + i*step) + offset) % total for i in range(0, 5)]
         alternatives = [self.spectrum[i] for i in indecies]
         return alternatives
+
+    def write_to_json(self):
+        with open(utils.JSON_PATH, "w") as json_file:
+            json.dump(self.spectrum, json_file)

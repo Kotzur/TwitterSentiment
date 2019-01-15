@@ -7,7 +7,6 @@
     2. ["Collaborative personalized Twitter recommendation"]() Chen, K. Chen, T. Zheng, G. Jin, O. Yao, E. Yu, Y. 2012 Shanghai Jiao Tong University
     3. ["Designing interfaces for presentation of opinion diversity"](https://www.researchgate.net/publication/221515349_Designing_interfaces_for_presentation_of_opinion_diversity) Munson, S. A. Conference Preceedings for CHI 2009
     4. ["Filter Bubbles, echo chambers, and online news consumption"](https://5harad.com/papers/bubbles.pdf) Flaxman, S. Goel, S. Rao, J. M. Public Opinion Quarterly, Vol 80, Special Issue, 2016, 298-320
-    5. ["Fake news and ideological polarization: Filter bubbles and selective exposure on social media"](http://journals.sagepub.com/doi/pdf/10.1177/0266382117722446) Spohr, D. Business Information Review, 2017, Vol 34, 150-160
     6. ["Beyond the filter bubble: concepts, myths, evidence and issues for future debates"](https://www.ivir.nl/publicaties/download/Beyond_the_filter_bubble__concepts_myths_evidence_and_issues_for_future_debates.pdf) Moeller, J. Helberger N. University of Amsterdam
 
 - Sentiment analysis:
@@ -19,6 +18,28 @@
     6. ["Thumbs up? Sentiment Classification using Machine Learning Techniques"](https://www.cs.cornell.edu/home/llee/papers/sentiment.pdf) Pang, B. Lee, L. Vaithyanathan, S. Proceedings of EMNLP 2002 79-86
 
 ## Papers read ##
+## Fake news and ideological polarization ##
+["Fake news and ideological polarization: Filter bubbles and selective exposure on social media"](http://journals.sagepub.com/doi/pdf/10.1177/0266382117722446) Spohr, D. Business Information Review, 2017, Vol 34, 150-160
+- perceived role of fake enws and selective news filtering in recent US presidential election and British eu referendum
+- Pew research cener: 62% adults in US get news on social media, 66% of all fb users use it for news
+- social networks displayed symptoms of ideological polarization and formation of filter bubbles (see for references)
+- trend of western world to become polarized
+- people cluster into like-minded, semi-isolated groups which in some cases become extreme
+- polarization -> loss of diversity of opinion and arguments -> benefits from having variety of opinions is lost
+- individual opinion gives way to group thinking
+- less constructive public discussion, too negative view of people from across the political spectrum
+- like-minded groups grow extreme
+- ignore facts that prove their arguments wrong
+- political difference is necessary to facilitate progressive public discussions
+- most users are not aware of the algorithm behind the new feed
+- no empirical evidence that warrants any strong worries about filter bubbles (Bogrsius)
+- range of studies produced contradicting results, identifying filter bubbles on Twitter and facebook
+- psychological theory: people have confirmation bias, reject anything that's inconsistent with their consistent view of the world
+- news finds me perception: living in the news feed world, people believe they can stay sufficiently informed about the world without explicitly seeking out news. People gather their info from social media -> are misinformed, no fact checking. this perception creates a mislead feeling of staying informed that the big news will always reach me, when in fact the possible benefits of active political knowledge are being lost
+- people with this attitude give the responsibility of staying informed citizens to algorithms guiding their news feeds
+- social media platforms effectively eliminated entry barriers to media production and distribution (Alcott and Gentzkow)
+- Facebook-funded study from 2015 agreed that the current newsfeed algorithm favours posts that support the user's ideological viewpoints (Bakshy et al, 2015)
+
 ## Social Media and Fake News in the 2016 Election ##
 ["Social Media and Fake News in the 2016 Election"](https://web.stanford.edu/~gentzkow/research/fakenews.pdf) Allcott, H. Gentzkow, M. Journal of Economic Perspectives - Vol. 31, No 2, Spring 2017, 211-236
 This paper studied the creation and spread of fake news in the year leading up to 2016 US election. Social media has played a major role in the popularization of fake news. In early 2000s the move of news online created concerns including "excess diversity of viewpoints would make it easier for like-minded citizens to form "echo chambers" or "filter bubbles" where they would be insulated from contrary perspectives". Content online is relayed with no significant third party filtering, fact checking or editorial judgement and this is especially true on social media where people give credibility to stories because they were shared by someone they follow. An individual with no track record can reach as many readers as Fox News, CNN or the NYT.
