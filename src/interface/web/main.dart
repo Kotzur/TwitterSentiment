@@ -135,10 +135,8 @@ void createArgumentLists() {
     argument.support = supportArgs;
     if(jsonArgument["negative"]){
       negativeArguments.add(argument);
-      print("Argument added to negative list");
     }else{
       positiveArguments.add(argument);
-      print("Arguemnt added to positive list");
     }
   }
 }
