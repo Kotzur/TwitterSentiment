@@ -1,12 +1,12 @@
 import 'dart:html';
-import 'dart:io' as io;
 import 'dart:convert';
-import 'package:path/path.dart' as path;
 
 InputElement topicInput;
 Element output;
 List<Argument> positiveArguments;
 List<Argument> negativeArguments;
+
+var arguments;
 
 TableElement argumentTable;
 
@@ -16,22 +16,27 @@ int posScore = 0;
 String topic;
 
 void main() {
-  // Display 3 screens, each with 3 arguments on each side and each with 3
-  // supporting tweets. That makes for at least 72 arguments.
+  // Run an interactive debate on a topic based on tweets.
   topicInput = querySelector('#topic');
   topicInput.onChange.listen(changeTopic);
   argumentTable = querySelector("#argTable");
-  getArgumentLists();
 }
 
+// Interface methods
+
 void changeTopic(Event e){
+  // Responds to new topic choice.
   topic = topicInput.value;
-  // TODO: Get a new set of arguments.
+  print("New topic: ${topic}");
   restartTable();
-  addArgumentRow();
+  requestArguments();
 }
 
 void addArgumentRow(){
+  // Displays next row of arguments in the debate.
+  if(rowCount != 0){
+    argumentTable.deleteRow(-1);
+  }
   if(negativeArguments.isNotEmpty && positiveArguments.isNotEmpty) {
     TableRowElement opinionRow = argumentTable.insertRow(-1);
     var negArg = negativeArguments.removeLast();
@@ -40,12 +45,14 @@ void addArgumentRow(){
       ..colSpan = 3
       ..children.add(new ButtonElement()
         ..text = negArg.tweet
-        ..onClick.listen(makeSelection));
+        ..onClick.listen(makeSelection)
+        ..id = "neg");
     opinionRow.insertCell(1)
       ..colSpan = 3
       ..children.add(new ButtonElement()
-        ..text = negArg.tweet
-        ..onClick.listen(makeSelection));
+        ..text = posArg.tweet
+        ..onClick.listen(makeSelection)
+        ..id = "pos");
 
     TableRowElement supportRow = argumentTable.insertRow(-1);
     int i = 0;
@@ -63,18 +70,22 @@ void addArgumentRow(){
 }
 
 void displayResultScreen(){
+  // Presents final interface with debate results.
   restartTable();
   TableRowElement resultRow = argumentTable.insertRow(-1);
   resultRow.insertCell(0)
     ..children.add(new ParagraphElement()
-      ..text = "According to this quiz you are ${posScore / rowCount * 100} % positive about ${topic}");
+      ..text = "You find arguments pro ${topic} ${posScore / rowCount * 100}% convincing");
 }
 
 void makeSelection(Event e){
+  // Responds to user's debate choice.
   rowCount++;
   ButtonElement selectedArgument = e.target;
   print(selectedArgument.parent.className);
-  // TODO: Find out which sentiment was clicked and increment score.
+  if(selectedArgument.id == "pos"){
+    posScore++;
+  }
   if(rowCount % 3 == 0) {
     restartTable();
   }
@@ -82,64 +93,52 @@ void makeSelection(Event e){
 }
 
 void restartTable(){
+  // Clears the interface from previous arguments.
   argumentTable.children.clear();
 }
 
-void getArgumentLists(){
-  List<String> spec = getStaticSpectrum(); //TODO: Get real spectrum.
-  positiveArguments = new List<Argument>();
-  negativeArguments = new List<Argument>();
-  int startingLength = spec.length;
-  while(spec.length > 3) {
-    var arg = new Argument();
-
-    arg.tweet = spec.removeLast();
-    List<String> support = new List<String>();
-    for (int i = 0; i < 3; i++) {
-      support.add(spec.removeLast());
-    }
-    arg.support = support;
-    // Take tweets from the end -> remove positives.
-    // When less than half are left they should all be negative.
-    if (spec.length > startingLength / 2) {
-      positiveArguments.add(arg);
-    }
-    else {
-      negativeArguments.add(arg);
-    }
-  }
-}
+//  Argument methods
 
 class Argument{
   String tweet;
   List<String> support;
 }
 
-LIElement newLI(String itemText) => LIElement()..text = itemText;
-
-List<String> getSpectrum() {
-  // Platform in web is urls, how to access local file in web context?
-  io.Process.run('python3', ['/home/aga/work/ii/dissertation/code/src/data_pass.py']).then((io.ProcessResult results) {
-    print(results.stdout);
+void requestArguments() {
+  // Requests arguments from a local server running the Python spectrum scripts.
+  HttpRequest.getString("http://127.0.0.1:5000/spectrum/${topic}").then((String jsonContents){
+    print(jsonContents);
+    arguments = jsonDecode(jsonContents);
+    createArgumentLists();
+    addArgumentRow();
+  })
+      .catchError((Error error){
+    print(error.toString());
   });
-  print("Start spectrum");
-  var pathToFile = path.join('/home/aga/work/ii/dissertation/code/data/spectrum.json');
-  var myFile = new io.File(pathToFile);
-  print("Created file ${myFile.path}");
-  String jsonString = myFile.readAsStringSync();
-  print("Got the json ${jsonString.substring(0, 100)}");
-  List<String> spectrum = jsonDecode(jsonString);
-  print("Decoded the spectrum");
-  int i = 0;
-  for (var s in spectrum.getRange(0, 10)) {
-    print("${i}: ${s}");
-    i++;
-  }
-  print("Finished the spectrum");
-  return spectrum;
 }
 
-List<String> getStaticSpectrum(){
-  List<String> spectrum = new List.from(["A", "B", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "r", "s", "t", "u", "v", "w", "x", "y", "z"]);
-  return spectrum;
+void createArgumentLists() {
+  // Decodes arguments from server response and places them in their lists.
+  positiveArguments = new List<Argument>();
+  negativeArguments = new List<Argument>();
+  // First element in the list is the number of arguments each side has.
+  for(int i = 0; i < arguments.length; i++){
+    var jsonArgument = arguments[i];
+    var argument = new Argument();
+    argument.tweet = jsonArgument["tweet"];
+    var support = jsonArgument["support"];
+    List<String> supportArgs = new List<String>();
+    for(var s in support){
+      print(s);
+      supportArgs.add(s);
+    }
+    argument.support = supportArgs;
+    if(jsonArgument["negative"]){
+      negativeArguments.add(argument);
+      print("Argument added to negative list");
+    }else{
+      positiveArguments.add(argument);
+      print("Arguemnt added to positive list");
+    }
+  }
 }

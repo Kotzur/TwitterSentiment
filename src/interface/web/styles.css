@@ -12,3 +12,19 @@ html, body {
   padding: 20px;
   text-align: left;
 }
+
+#noborder {
+  border: none;
+}
+
+table {
+  border-collapse: collapse;
+}
+
+table, th, td {
+  border: 1px solid black;
+}
+
+#argTable tr, #argTable th{
+  height: 50px;
+}

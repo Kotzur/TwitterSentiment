@@ -63,6 +63,38 @@ class SentimentSpectrum(object):
         alternatives = [self.spectrum[i] for i in indecies]
         return alternatives
 
-    def write_to_json(self):
-        with open(utils.JSON_PATH, "w") as json_file:
-            json.dump(self.spectrum, json_file)
+    def get_json_arguments(self):
+        """Creates arguments for the debate and prepares them for sending with HTTP.
+        9 positive and negative tweets are chosen from across their spectrum and their neighboring tweets are taken as
+        supporting messages. Put into the Argument class format, the same used on the client side, the arguments are
+        then JSON serialised.
+        :return json list of argument objects 9 negative followed by 9 positive.
+        """
+        class Argument:
+            def __init__(self, t, sup, neg):
+                self.tweet = t
+                self.support = sup
+                self.negative = neg
+
+        arguments = []
+        # Assume that one argument consists of one main tweet and 3 supporting tweets = 4
+        max_argument_count = min(self.pos_count // 4, self.neg_count // 4, 9)
+        neg_main_indecies = [(self.neg_count // max_argument_count) * i for i in range(0, max_argument_count)]
+        neg_support_indecies = [(index + i) for index in neg_main_indecies for i in range(1, 4)]
+        pos_main_indecies = [self.neg_count + (self.pos_count // max_argument_count) * i for i in range(0, max_argument_count)]
+        pos_support_indecies = [(index + i) for index in pos_main_indecies for i in range(1, 4)]
+
+        for i, index in enumerate(neg_main_indecies):
+            sup = []
+            for sup_number in range(0, 3):
+                sup_index = neg_support_indecies[sup_number + 3*i]
+                sup.append(self.spectrum[sup_index])
+            arguments.append(Argument(self.spectrum[index], sup, True))
+        for i, index in enumerate(pos_main_indecies):
+            sup = []
+            for sup_number in range(0, 3):
+                sup_index = pos_support_indecies[sup_number + 3*i]
+                sup.append(self.spectrum[sup_index])
+            arguments.append(Argument(self.spectrum[index], sup, False))
+        # First element of the list is the number of arguments being sent.
+        return json.dumps([arg.__dict__ for arg in arguments])

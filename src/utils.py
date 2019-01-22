@@ -214,9 +214,9 @@ def get_dataset(topic):
         tso.set_keywords([topic])
         tso.set_language('en')
         tso.set_include_entities(False)  # and don't give us all those entity information
+        tso.set_count(100)
 
         keys = get_twitter_keys()
-        print(keys)
         c_key, c_secret, a_token, a_token_secret = keys
 
         ts = TwitterSearch(
@@ -238,7 +238,7 @@ def get_dataset(topic):
                 dataset.add(clean)
         print("Dataset length:", len(dataset))
     except TwitterSearchException as e:  # take care of all those ugly errors if there are some
-        print(e)
+        print("Twiiter Exception:", e)
 
     return dataset
 
@@ -289,6 +289,7 @@ def anonymize(text):
     :return text with substitutions.
     """
     text = re.sub("(http:[^\s\n\r]+)", "HTTP", text)
+    text = re.sub("(https:[^\s\n\r]+)", "HTTP", text)
     return re.sub("@\w+", "@USERNAME", text)
 
 

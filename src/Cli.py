@@ -1,5 +1,3 @@
-import sys
-
 from src.SentimentSpectrum import SentimentSpectrum
 import src.utils as utils
 

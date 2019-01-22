@@ -85,6 +85,13 @@ __Parsing loaded data:__
 - It turned out after I implemented the script that the API doesn't support the new, longer tweets (they changed from 140 to 280 characters) and display ... in the longer tweets. I haven't yet found a way to fetch them correctly using the API but I did find a way to do it through "raw" requests.
 - The Tweets seemed to come in a much larger number than 100 and they are repeating. I placed them in a hash set to remove the redundant tweets but they still seem to come in a set larger than a 100. I don't exactly know why that is and suspect that the API sends multiple requests when I ask it to fetch search results and then combines them into one. There is sufficient delay between the consecutive requests that new tweets are posted between them.
 
+## Step 8: DART interface ##
+- Had to learn DART to create a more complex interface
+- Chose to do the debate design because it would be interactive with the user
+
+### Problems ###
+- I couldn't figure out how to connect the python script creating the spectrum with the Dart interface. I tried writing the spectrum to a file and then making the dart web app fetch 
+
 ## Meeting notes ##
 ### First meeting: ###
 
@@ -163,6 +170,30 @@ __Parsing loaded data:__
     - start writing at Christmas
     - write the ethics form when you have a prototype
 
+### Fifth meeting ###
+My points:
+    - I have the basic interface implemented and it works well.
+    - I have barebones of the Dart interface. Problems:
+        - I don't know how to access local files/processes. I finally understood that the HTTP requests are to your local server but they still don't work (not a lot of experiments done yet on that though).  Flask
+        - Not my favourite/best design but quite interactive for the user and I could clearly see how to implement it. Probably would've chosen the radio interface if I felt more secure time-wise.
+    - The spectrum is not very effective. The confidence measures don't give very good clues as to where on the spectrum the tweet should be.
+    - I only started writing the Preparation chapter and have an outline for it. I didn't start writing the implementation at all. Lack of time over the break unfortunately. Send
+    - In preparation notes they write "show professional engineering techniques" How can I demonstrate that in a write up? Examples? Comments, modular design, structure, reuse libraries
+    - Ethics form.
+    - Experiment plan: use interface
+        - How will the participants be recruited/
+        - I still am not sure what the main objective of the study will be.
+        - Need to write the questionnaire/study manual now. Should I use the basic interface in the study after finishing the JS one?
+        - Precautions taken: survey methods and data research online
+        - provides structure and modularity, types, libraries, marketing speels and turn into computer science
+
+TODO:
+    - Write and submit the ethics form
+    - Finish off the Dart interface: I need to style it still and most importantly run a process and read the response.
+    - Write experiment manual and send off with working dart.
+    - use the browser http library for dart
+    
+
 ### Corrections from Overseers ###
 - add calendar dates to the schedule
 - add milestones to each chunk in schedule
@@ -184,9 +215,9 @@ __Parsing loaded data:__
   | 12/11/2018  | 16/11/2018  | Implement bag-of-words classifier. Chose the design.  | Bag-of-words classifier ready.  | Yes |
   | 19/11/2018  | 23/11/2018  | Implement Naive Bayes classifier. Perform cross-validation.  | Naive Bayes classifier. Results from model evaluations.  | Yes |
   | 26/11/2018  | 30/11/2018  | Extra time.  |   |   |
-  | 03/12/2018  | 10/12/2018  | Learn JavaScript. Create basic interface. Finish the models in case they are not complete.  | Basic interface.  | Yes, but not in JS |
+  | 03/12/2018  | 10/12/2018  | Learn JavaScript. Create basic interface. Finish the models in case they are not complete.  | Basic interface.  | Yes |
   | 10/12/2018  | 19/12/2018  | Link the interface with the model.  | Working program ready to use in user studies.  | Yes but only basic. |
-  | 26/12/2018  | 05/01/2019  | Write introduction and preparation sections.  | Introduction and Preparation.  |   |
+  | 26/12/2018  | 05/01/2019  | Write introduction and preparation sections.  | Introduction and Preparation.  | No |
   | 07/01/2019  | 12/01/2019  | Extra time. Make sure all notes are well organized.	  | Clear notes. 	  |   |
   | 14/01/2019  | 18/01/2019  | Design user studies. Recruit subjects for user studies. Use this as buffer time or work on extensions.  | Interview questions and user studies plan. A list of people that will participate in the user studies.  |   |
   | 21/01/2019  | 25/01/2019  | Run two user study pilots. Work on the progress report and presentation.  | Corrected plan for user studies based on the pilots. Draft report and presentation.  |   |
