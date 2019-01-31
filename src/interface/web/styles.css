@@ -5,26 +5,79 @@ html, body {
   height: 100%;
   margin: 0;
   padding: 0;
+  background-color: #FFFFFF;
   font-family: 'Roboto', sans-serif;
 }
 
-#output {
-  padding: 20px;
-  text-align: left;
+#loading {
+  background-color: #FFFFFF;
+  text-align: center;
+  font-weight: bolder;
+  font-size: 46px;
 }
 
-#noborder {
-  border: none;
+/* Table */
+#argTable{
+  width: 100%;
+  table-layout: fixed;
+  padding: 50px;
 }
 
-table {
-  border-collapse: collapse;
-}
-
-table, th, td {
-  border: 1px solid black;
+#argTable td{
+  max-width: 50%;
+  width: 50%;
 }
 
 #argTable tr, #argTable th{
   height: 50px;
+  width: 50%;
+}
+
+/* Buttons */
+#pos, #neg
+{
+  display: inline-block;
+  width: 100%;       /* set to 100% */
+  height: 100%;      /* set to 100% */
+  padding-top: .6em;
+  padding-bottom: .6em;
+  color: #456C72;
+  font-size: 20px;
+  background-color: #9CBACB ;
+  border-radius: 5px;
+  border: solid #678EA4 1px;
+  box-shadow: 2px 2px 1px #888888;
+  clear:right;
+  float:right;
+}
+
+#clicked{
+  display: inline-block;
+  width: 100%;       /* set to 100% */
+  height: 100%;      /* set to 100% */
+  padding-top: .6em;
+  padding-bottom: .6em;
+  color: #678EA4;
+  font-size: 16px;
+  background-color: #EEF5F9;
+  border-radius: 5px;
+  border: solid #C8C8A9 1px;
+  box-shadow: 2px 2px 1px #888888;
+  clear:right;
+  float:right;
+}
+
+#pos-sup, #neg-sup{
+  visibility: hidden;
+}
+
+#pos-sup-visible, #neg-sup-visible{
+  visibility: visible;
+  width: 100%;       /* set to 100% */
+  height: 100%;      /* set to 100% */
+  color: #678EA4;
+  background-color: #EEF5F9;
+  border: solid #9CBACB 1px;
+  clear:right;
+  padding-left: 2px;
 }

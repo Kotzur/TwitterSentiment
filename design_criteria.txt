@@ -3,7 +3,7 @@ Purpose of the interface: __Exploratory understanding__
 
 - low viscosity, allow for dynamic exploration of ideas and jumping around the spectrum to read various opinions, both agreeing and disagreeing with the user coming from a large sample.
 - high visibility when it comes to message content
-- premature commitment can be present to encourage the user to weigh options and make decisions which tweets they find interesting. Only the last hosen tweet will have an impact though. And there should be an easy mechanism of restarting the exploration.
+- premature commitment can be present to encourage the user to weigh options and make decisions which tweets they find interesting. Only the last chosen tweet will have an impact though. And there should be an easy mechanism of restarting the exploration.
 - hidden dependencies should be minimised so that content generated is mostly based on the most recent user activities directly. Ideally, however, only previously unseen content would be displayed.
 - no abstraction necessary in terms of defining new ui actions. The UI shoudl have macros to enable easy searching for new content in batches and be able to explore tweets presented without having to restart and input them manually.
 - ideally, low error proneness and role expressiveness unless making mistakes in the design context enhances its exploratory nature (e.g. choosing the wrong option makes the user read something they wouldn't normally)
@@ -11,7 +11,7 @@ Purpose of the interface: __Exploratory understanding__
 - weak closeness of mapping - abstract the sentiment spectrum and the debate away to have a natural exploration of the content and observe an impact on the user of implicit clash of ideologies. Preferably, the design would be a new way of viewing online content which would move away from the cliche scrolling feed.
 - partial consistency - all opinions are equal but not all messages are. Give more emphasis to popular tweets but give fair representation to all sides of the argument.
 - reduce diffuseness to focus only on messages. Ideally, highlight their keywords to be able to skim through them quickly. This helps fast exploration and creates a more dynamic system.
-- Don't require any hard mental operations caused by the notation but do require hard mental operations when it comes to the message content. Challenge the uder to think about messages presented, question their believes, make them make decisions on what they find more interesting.
+- Don't require any hard mental operations caused by the notation but do require hard mental operations when it comes to the message content. Challenge the user to think about messages presented, question their believes, make them make decisions on what they find more interesting.
 - It would be interesting to include progressive evaluation to give the user some sort of motivation to progress through the search space.
 
 # Design descriptions #

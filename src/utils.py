@@ -213,31 +213,35 @@ def get_dataset(topic):
         tso = TwitterSearchOrder()
         tso.set_keywords([topic])
         tso.set_language('en')
-        tso.set_include_entities(False)  # and don't give us all those entity information
+        tso.set_include_entities(False)
         tso.set_count(100)
 
-        keys = get_twitter_keys()
-        c_key, c_secret, a_token, a_token_secret = keys
+        # Support extended tweets.
+        search_url = tso.create_search_url() + "&tweet_mode=extended"
+        tso.set_search_url(search_url)
+
+        c_key, c_secret, a_token, a_token_secret = get_twitter_keys()
 
         ts = TwitterSearch(
             consumer_key=c_key,
             consumer_secret=c_secret,
             access_token=a_token,
-            access_token_secret=a_token_secret
+            access_token_secret=a_token_secret,
+            tweet_mode="extended"
         )
 
         iterable = ts.search_tweets_iterable(tso)
         for i, tweet in enumerate(iterable):
-            clean = clean_data(tweet['text'])
+            if "retweeted_status" in tweet:
+                clean = clean_data(tweet['retweeted_status']['full_text'])
+            else:
+                clean = clean_data(tweet['full_text'])
             if clean.startswith("rt"):
-                tokens = clean.split()[2:]
-                clean = ""
-                for token in tokens:
-                    clean += token + " "
+                clean = clean[3:]
             if clean not in dataset:
                 dataset.add(clean)
         print("Dataset length:", len(dataset))
-    except TwitterSearchException as e:  # take care of all those ugly errors if there are some
+    except TwitterSearchException as e:
         print("Twiiter Exception:", e)
 
     return dataset
@@ -270,27 +274,17 @@ def round_robin_split(reviews):
 def clean_data(text):
     """Reformat data for processing.
     Substitute all linebreaks with a whitespace. Surround all punctuation with a whitespace to also treat them as
-    tokens. Finally, anonymize the data.
+    tokens. Anonymize the data.
     :param text line of text to be cleaned.
     :return text ready for processing.
     """
     norm_text = text.lower()
     # Replace breaks with spaces
     norm_text = norm_text.replace('<br />', ' ')
+    norm_text = re.sub("(http|ftp|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?", "HTTP", norm_text)
     # Pad punctuation with spaces on both sides
     norm_text = re.sub(r"([\.\",\(\)!\?;:(...)])", " \\1 ", norm_text)
-    return anonymize(norm_text)
-
-
-def anonymize(text):
-    """Substitute potentially sensitive information from the tweets.
-    Replace all username mentions with '@USERNAME' and all hyperlinks with 'HTTP'.
-    :param text tweet to anonymize.
-    :return text with substitutions.
-    """
-    text = re.sub("(http:[^\s\n\r]+)", "HTTP", text)
-    text = re.sub("(https:[^\s\n\r]+)", "HTTP", text)
-    return re.sub("@\w+", "@USERNAME", text)
+    return re.sub(r"@\w+", "@USERNAME", norm_text)
 
 
 def tokenize(text):

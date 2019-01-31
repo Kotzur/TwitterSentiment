@@ -2,7 +2,7 @@ import 'dart:html';
 import 'dart:convert';
 
 InputElement topicInput;
-Element output;
+ParagraphElement loading;
 List<Argument> positiveArguments;
 List<Argument> negativeArguments;
 
@@ -17,6 +17,7 @@ String topic;
 
 void main() {
   // Run an interactive debate on a topic based on tweets.
+  loading = querySelector("#loading");
   topicInput = querySelector('#topic');
   topicInput.onChange.listen(changeTopic);
   argumentTable = querySelector("#argTable");
@@ -46,20 +47,26 @@ void addArgumentRow(){
       ..children.add(new ButtonElement()
         ..text = negArg.tweet
         ..onClick.listen(makeSelection)
+        ..onMouseOver.listen(displaySupport)
+        ..onMouseOut.listen(hideSupport)
         ..id = "neg");
     opinionRow.insertCell(1)
       ..colSpan = 3
       ..children.add(new ButtonElement()
         ..text = posArg.tweet
         ..onClick.listen(makeSelection)
+        ..onMouseOver.listen(displaySupport)
+        ..onMouseOut.listen(hideSupport)
         ..id = "pos");
 
     TableRowElement supportRow = argumentTable.insertRow(-1);
+    supportRow.id = "support";
     int i = 0;
     for (var arg in [negArg, posArg]) {
       for (var sup in arg.support) {
         supportRow.insertCell(i)
-          ..text = sup;
+          ..text = sup
+          ..id = i < 3 ? "neg-sup" : "pos-sup";
         i++;
       }
     }
@@ -72,29 +79,65 @@ void addArgumentRow(){
 void displayResultScreen(){
   // Presents final interface with debate results.
   restartTable();
-  TableRowElement resultRow = argumentTable.insertRow(-1);
-  resultRow.insertCell(0)
-    ..children.add(new ParagraphElement()
-      ..text = "You find arguments pro ${topic} ${posScore / rowCount * 100}% convincing");
+  loading.text = "You are ${(posScore / rowCount * 100).round()}% pro ${topic}";
 }
 
 void makeSelection(Event e){
   // Responds to user's debate choice.
   rowCount++;
   ButtonElement selectedArgument = e.target;
-  print(selectedArgument.parent.className);
-  if(selectedArgument.id == "pos"){
-    posScore++;
+  if((selectedArgument.id == "pos") || (selectedArgument.id == "neg")) {
+    if (selectedArgument.id == "pos") {
+      posScore++;
+    }
+    if (rowCount % 3 == 0) {
+      restartTable();
+    }
+    else {
+      List<TableRowElement> rows = argumentTable.rows;
+      TableRowElement lastArgRow = rows.elementAt(rows.length - 2);
+      for (var cell in lastArgRow.cells) {
+        cell.children[0].id = "clicked";
+      }
+    }
+    addArgumentRow();
   }
-  if(rowCount % 3 == 0) {
-    restartTable();
+}
+
+void displaySupport(Event e){
+  // Display the supporting argument on hover.
+  ButtonElement hoveredArgument = e.target;
+    TableRowElement lastRow = argumentTable.rows.elementAt(argumentTable.rows.length - 1);
+    for(var cell in lastRow.cells){
+      if(cell.id == "${hoveredArgument.id}-sup"){
+        cell.id = "${hoveredArgument.id}-sup-visible";
+      }
   }
-  addArgumentRow();
+}
+
+void hideSupport(Event e){
+  // Display the supporting argument on hover.
+  ButtonElement hoveredArgument = e.target;
+  TableRowElement lastRow = argumentTable.rows.elementAt(argumentTable.rows.length - 1);
+  for(var cell in lastRow.cells){
+    if(cell.id == "${hoveredArgument.id}-sup-visible"){
+      cell.id = "${hoveredArgument.id}-sup";
+    }
+  }
 }
 
 void restartTable(){
   // Clears the interface from previous arguments.
   argumentTable.children.clear();
+}
+
+void loadingScreen(bool on){
+  if(on){
+    loading.text = "Loading...";
+  }
+  else{
+    loading.text = "";
+  }
 }
 
 //  Argument methods
@@ -106,8 +149,9 @@ class Argument{
 
 void requestArguments() {
   // Requests arguments from a local server running the Python spectrum scripts.
-  HttpRequest.getString("http://127.0.0.1:5000/spectrum/${topic}").then((String jsonContents){
-    print(jsonContents);
+  HttpRequest
+      .getString("http://127.0.0.1:5000/spectrum/${topic}")
+      .then((String jsonContents){
     arguments = jsonDecode(jsonContents);
     createArgumentLists();
     addArgumentRow();
@@ -115,9 +159,12 @@ void requestArguments() {
       .catchError((Error error){
     print(error.toString());
   });
+  print("hello");
+  loadingScreen(true);
 }
 
 void createArgumentLists() {
+  loadingScreen(false);
   // Decodes arguments from server response and places them in their lists.
   positiveArguments = new List<Argument>();
   negativeArguments = new List<Argument>();
@@ -129,7 +176,6 @@ void createArgumentLists() {
     var support = jsonArgument["support"];
     List<String> supportArgs = new List<String>();
     for(var s in support){
-      print(s);
       supportArgs.add(s);
     }
     argument.support = supportArgs;

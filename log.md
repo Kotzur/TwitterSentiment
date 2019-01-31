@@ -90,7 +90,7 @@ __Parsing loaded data:__
 - Chose to do the debate design because it would be interactive with the user
 
 ### Problems ###
-- I couldn't figure out how to connect the python script creating the spectrum with the Dart interface. I tried writing the spectrum to a file and then making the dart web app fetch 
+- I couldn't figure out how to connect the python script creating the spectrum with the Dart interface. I tried writing the spectrum to a file and then making the dart web app fetch
 
 ## Meeting notes ##
 ### First meeting: ###
@@ -191,8 +191,7 @@ TODO:
     - Write and submit the ethics form
     - Finish off the Dart interface: I need to style it still and most importantly run a process and read the response.
     - Write experiment manual and send off with working dart.
-    - use the browser http library for dart
-    
+
 
 ### Corrections from Overseers ###
 - add calendar dates to the schedule
@@ -214,13 +213,13 @@ TODO:
   | 05/11/2018  | 09/11/2018  | Create 20 designs for the interface. Pre-process data.  | 20 design concepts. Datasets ready.  | Yes |
   | 12/11/2018  | 16/11/2018  | Implement bag-of-words classifier. Chose the design.  | Bag-of-words classifier ready.  | Yes |
   | 19/11/2018  | 23/11/2018  | Implement Naive Bayes classifier. Perform cross-validation.  | Naive Bayes classifier. Results from model evaluations.  | Yes |
-  | 26/11/2018  | 30/11/2018  | Extra time.  |   |   |
+  | 26/11/2018  | 30/11/2018  | Extra time.  |   | --- |
   | 03/12/2018  | 10/12/2018  | Learn JavaScript. Create basic interface. Finish the models in case they are not complete.  | Basic interface.  | Yes |
-  | 10/12/2018  | 19/12/2018  | Link the interface with the model.  | Working program ready to use in user studies.  | Yes but only basic. |
-  | 26/12/2018  | 05/01/2019  | Write introduction and preparation sections.  | Introduction and Preparation.  | No |
-  | 07/01/2019  | 12/01/2019  | Extra time. Make sure all notes are well organized.	  | Clear notes. 	  |   |
-  | 14/01/2019  | 18/01/2019  | Design user studies. Recruit subjects for user studies. Use this as buffer time or work on extensions.  | Interview questions and user studies plan. A list of people that will participate in the user studies.  |   |
-  | 21/01/2019  | 25/01/2019  | Run two user study pilots. Work on the progress report and presentation.  | Corrected plan for user studies based on the pilots. Draft report and presentation.  |   |
+  | 10/12/2018  | 19/12/2018  | Link the interface with the model.  | Working program ready to use in user studies.  | Yes. |
+  | 26/12/2018  | 05/01/2019  | Write introduction and preparation sections.  | Introduction and Preparation.  | Draft and outline. |
+  | 07/01/2019  | 12/01/2019  | Extra time. Make sure all notes are well organized.	  | Clear notes. 	  | --- |
+  | 14/01/2019  | 18/01/2019  | Design user studies. Recruit subjects for user studies. Use this as buffer time or work on extensions.  | Interview questions and user studies plan. A list of people that will participate in the user studies.  | Draft study plan. No list. |
+  | 21/01/2019  | 25/01/2019  | Run two user study pilots. Work on the progress report and presentation.  | Corrected plan for user studies based on the pilots. Draft report and presentation.  | Draft progress report. No finalised plan. No pilots. |
   | 28/01/2019  | 01/02/2019  | Prepare the progress report and the presentation.  | Submitted progress report (01/02/2019)  |   |
   | 04/02/2019  | 15/02/2019  | Run user studies.  | Recordings and notes from the user studies.  |   |
   | 18/02/2019  | 22/02/2019  | Extra time.  |   |   |
