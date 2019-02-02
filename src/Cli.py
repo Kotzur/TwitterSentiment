@@ -12,8 +12,8 @@ class Cli(object):
 
     def init_prompt(self):
         """Prompts to choose a new topic."""
-        self.topic = input("Enter topic:")
-        self.central = input("Enter a tweet you agree with.")
+        self.topic = input("Enter topic: ")
+        self.central = input("Enter a tweet you agree with: ")
         dataset = utils.get_dataset(self.topic)
         self.spectrum.create_spectrum(dataset)
         self.print_alternative_views()

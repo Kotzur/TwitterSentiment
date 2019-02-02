@@ -152,6 +152,7 @@ class Classifier:
                 act, pred = self.predict(classifier, test)
                 actual.extend(act)
                 predictions.extend(pred)
+        print("\n")
         return actual, predictions
 
     def train_and_pickle(self, dataset):
