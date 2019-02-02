@@ -1,6 +1,6 @@
 import sys
 
-from .Cli import Cli
+from Cli import Cli
 
 cli = Cli()
 skip = 0
