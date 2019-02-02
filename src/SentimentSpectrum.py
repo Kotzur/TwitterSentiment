@@ -1,6 +1,6 @@
-import src.utils as utils
-from src.Classifier import Classifier
-from src.Classifier import Type
+import utils as utils
+from Classifier import Classifier
+from Classifier import Type
 import pickle
 import json
 

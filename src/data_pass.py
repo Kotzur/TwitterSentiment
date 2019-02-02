@@ -1,7 +1,7 @@
 import os
 
-from src import utils
-from src.SentimentSpectrum import SentimentSpectrum
+import utils
+from SentimentSpectrum import SentimentSpectrum
 
 from flask import Flask, json
 from flask_cors import CORS

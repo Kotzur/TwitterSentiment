@@ -1,5 +1,5 @@
-from src.SentimentSpectrum import SentimentSpectrum
-import src.utils as utils
+from SentimentSpectrum import SentimentSpectrum
+import utils as utils
 
 
 class Cli(object):

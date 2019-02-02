@@ -1,6 +1,6 @@
-import src.utils as utils
-from src.Classifier import Classifier
-from src.Classifier import Type
+import utils
+from Classifier import Classifier
+from Classifier import Type
 
 # utils.create_small_dataset()
 def compare_between_models():
