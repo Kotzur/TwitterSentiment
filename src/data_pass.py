@@ -1,15 +1,14 @@
-import os
-
 import utils
 from SentimentSpectrum import SentimentSpectrum
 
-from flask import Flask, json
+from flask import Flask
 from flask_cors import CORS
 
 app = Flask(__name__)
 cors = CORS(app)
 
 in_making = False
+
 
 @app.route('/spectrum/<string:topic>')
 def get_spectrum(topic):
@@ -18,8 +17,8 @@ def get_spectrum(topic):
     dataset = utils.get_dataset(topic)
     spectrum.create_spectrum(dataset)
     return spectrum.get_json_arguments()
+# Check if using the tflrd gives better resurts
 
 
 if __name__ == "__main__":
-    output = get_spectrum("trump")
-    print(output)
+    app.run()
