@@ -1,4 +1,4 @@
-from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
 from sklearn.svm import SVC
@@ -100,6 +100,7 @@ class Classifier:
             # Need to specify gamma because it will soon be depreciated and otherwise it throws warnings.
             clf = SVC(gamma='auto', kernel='linear') if self.type == Type.SVM else MultinomialNB(alpha=1)
             pipeline = Pipeline([('vect', feature_extractor),
+                                 ('tfidf', TfidfTransformer()),
                                  ('clf', clf)])
             pipeline.fit([t[0] for t in train_set], [t[1] for t in train_set])
             return pipeline

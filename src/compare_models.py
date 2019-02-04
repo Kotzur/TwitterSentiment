@@ -29,6 +29,11 @@ def compare_between_models():
 
 def compare_nb():
     tweets = utils.load_anonymized_sentiment_tweets()
+    print("svm")
+    classifier = Classifier(unigrams=True, bigrams=True, classifier_type=Type.SVM)
+    act, svm_pred = classifier.classify(tweets)
+    utils.accuracy(act, svm_pred)
+
     print("unigrams")
     classifier = Classifier(unigrams=True, bigrams=False, classifier_type=Type.NB)
     act, nb_pred = classifier.classify(tweets)
