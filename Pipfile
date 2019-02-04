@@ -17,7 +17,7 @@ scikit-learn = "*"
 twittersearch = "*"
 sets = "*"
 flask = "*"
-
+flask_cors = "*"
 
 [requires]
 
