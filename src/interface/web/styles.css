@@ -26,6 +26,8 @@ html, body {
 #argTable td{
   max-width: 50%;
   width: 50%;
+  margin-right: 15px;
+  margin-left: 15px;
 }
 
 #argTable tr, #argTable th{
@@ -83,4 +85,13 @@ button{
 
 #resultTable th, #resultTable td{
   border: 1px solid #333333;
+  padding: 15px;
+}
+
+#resultTable tr:hover {
+  background-color: #f5f5f5;
+}
+
+#resultTable td:nth-of-type(even){
+  background-color: #f5f5f5;
 }

@@ -55,7 +55,7 @@ class SentimentSpectrum(object):
         i = 0
         for sent, tweet, conf in zip(sentiments, tweets, confidences):
             if i % 10 == 0:
-                print("*", end=" ")
+                print("*", end=" ", flush=True)
             i += 1
             if sent == 0:
                 word_probs = self.get_word_probabilities(tweet, True)
