@@ -281,10 +281,10 @@ def clean_data(text):
     norm_text = text.lower()
     # Replace breaks with spaces
     norm_text = norm_text.replace('<br />', ' ')
-    norm_text = re.sub("(http|ftp|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?", "HTTP", norm_text)
+    norm_text = re.sub("(http|ftp|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?", "link", norm_text)
     # Pad punctuation with spaces on both sides
     norm_text = re.sub(r"([\.\",\(\)!\?;:(...)])", " \\1 ", norm_text)
-    return re.sub(r"@\w+", "@USERNAME", norm_text)
+    return re.sub(r"@\w+", "@username", norm_text)
 
 
 def tokenize(text):
