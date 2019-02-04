@@ -3,6 +3,7 @@ from Classifier import Classifier
 from Classifier import Type
 import pickle
 import json
+import math
 
 
 class Argument:
@@ -15,18 +16,22 @@ class Argument:
 
 
 class SentimentSpectrum(object):
-    def __init__(self, build_new=False):
+    def __init__(self, build_new=False, word_probs=True):
         """Represents a spectrum of Tweets from most negative to most positive on a specific topic.
         :param build_new boolean whether to retrain and pickle a classifier before loading it."""
+        self.word_probs = word_probs
         if build_new:
             self.build_classifier()
 
         with open(utils.MODEL_PATH, "rb") as file:
             self.classifier = pickle.load(file)
 
+        # Spectrum from most prob negative to most prob positive arguments.
         self.spectrum = []
-        self.neg_count = 0
-        self.pos_count = 0
+        # All negative arguments from the most to least probable.
+        self.negative = []
+        # All positive arguments from the most to lest probable.
+        self.positive = []
 
     def build_classifier(self):
         """Create a new classifier and pickle it."""
@@ -40,19 +45,25 @@ class SentimentSpectrum(object):
         them.
         :param tweets set of unlabelled strings
         """
+        print("Starting predictions")
         prediction_probabilities = self.classifier.predict_proba(tweets)
         sentiments = self.classifier.predict(tweets)
+        print("Startung confidences")
         confidences = [max(probs) for probs in prediction_probabilities]
         negatives = []
         positives = []
+        i = 0
         for sent, tweet, conf in zip(sentiments, tweets, confidences):
+            if i % 10 == 0:
+                print("*", end=" ")
+            i += 1
             if sent == 0:
                 word_probs = self.get_word_probabilities(tweet, True)
                 new_tweet = Argument(t=tweet, sup=[], neg=True, prob=conf, word_probs=word_probs)
                 negatives.append(new_tweet)
             else:
                 word_probs = self.get_word_probabilities(tweet, False)
-                new_tweet = Argument(t=tweet, sup=[], neg=False, prob=conf, word_probs=word_probs)
+                new_tweet = Argument(t=tweet, sup=[], neg=False, prob=round(conf, 5), word_probs=word_probs)
                 positives.append(new_tweet)
 
         # Sort the lists of tweets accord to their confidence values.
@@ -60,8 +71,9 @@ class SentimentSpectrum(object):
         positives.sort(key=lambda x: x.class_prob)
 
         self.spectrum = negatives + positives
-        self.neg_count = len(negatives)
-        self.pos_count = len(positives)
+        self.negative = negatives
+        positives.reverse()
+        self.positive = positives
 
     def get_word_probabilities(self, tweet, sentiment):
         feature_log_probs = self.classifier.named_steps["clf"].feature_log_prob_
@@ -70,7 +82,8 @@ class SentimentSpectrum(object):
         word_probs = {}
         for word in tweet.split():
             if word in vocabulary_mapping:
-                word_probs[word] = feature_log_probs[0 if sentiment is True else 1][vocabulary_mapping[word]]
+                word_probs[word] = round(math.exp(
+                    feature_log_probs[0 if sentiment is True else 1][vocabulary_mapping[word]]), 5)
             else:
                 # Because of Laplace smoothing, unknown words are given 1/N prob where N is the number of words the
                 # classifier trained on.
@@ -91,9 +104,9 @@ class SentimentSpectrum(object):
         total = len(self.spectrum)
         if tweet_sent == 0:
             tweet_prob = 1 - tweet_prob
-            index = int(self.neg_count * tweet_prob)
+            index = int(len(self.negative) * tweet_prob)
         else:
-            index = int(self.neg_count + self.pos_count * tweet_prob)
+            index = int(len(self.spectrum) * tweet_prob)
         step = total // 5
         offset = skip // 5
         indecies = [((index + i*step) + offset) % total for i in range(0, 5)]
@@ -107,31 +120,24 @@ class SentimentSpectrum(object):
         then JSON serialised.
         :return json list of argument objects 9 negative followed by 9 positive.
         """
-        arguments = []
         # Assume that one argument consists of one main tweet and 3 supporting tweets = 4
-        max_argument_count = min(self.pos_count // 4, self.neg_count // 4, 9)
+        max_argument_count = min(len(self.positive) // 4, len(self.negative) // 4, 9)
 
-        neg_main_indecies = [(self.neg_count // max_argument_count) * i for i in range(0, max_argument_count)]
-        neg_support_indecies = [(index + i) for index in neg_main_indecies for i in range(1, 4)]
-        pos_main_indecies = [self.neg_count +
-                             (self.pos_count // max_argument_count) * i for i in range(0, max_argument_count)]
-        pos_support_indecies = [(index + i) for index in pos_main_indecies for i in range(1, 4)]
+        main_indecies = [4 * i for i in range(0, max_argument_count)]
 
-        arguments.extend(self.get_supporting_arguments(neg_main_indecies, neg_support_indecies))
-        arguments.extend(self.get_supporting_arguments(pos_main_indecies, pos_support_indecies))
+        arguments = self.get_supporting_arguments(main_indecies)
 
         # First element of the list is the number of arguments being sent.
         return json.dumps([arg.__dict__ for arg in arguments])
 
-    def get_supporting_arguments(self, main_indecies, support_indecies):
+    def get_supporting_arguments(self, main_indecies):
         arguments = []
-        for i, index in enumerate(main_indecies):
-            sup = []
-            for sup_number in range(0, 3):
-                sup_index = support_indecies[sup_number + 3*i]
-                sup.append(self.spectrum[sup_index])
-
-            main_arg = self.spectrum[index]
-            main_arg.support = sup
-            arguments.append(main_arg)
+        for argument_list in [self.negative, self.positive]:
+            for i, index in enumerate(main_indecies):
+                sup = []
+                for sup_number in range(1, 4):
+                    sup.append(argument_list[index + sup_number].tweet)
+                main_arg = argument_list[index]
+                main_arg.support = sup
+                arguments.append(main_arg)
         return arguments

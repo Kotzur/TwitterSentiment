@@ -5,15 +5,25 @@ InputElement topicInput;
 ParagraphElement loading;
 List<Argument> positiveArguments;
 List<Argument> negativeArguments;
-
-var arguments;
+List<Argument> chosenArguments = [];
+List<Argument> unchosenArguments = [];
+Map<String, Argument> arguments;
 
 TableElement argumentTable;
+TableElement resultTable;
 
 int rowCount = 0;
 int posScore = 0;
 
 String topic;
+
+class Argument{
+  String tweet;
+  bool isNeg;
+  List<String> support;
+  var class_prob;
+  var word_probs;
+}
 
 void main() {
   // Run an interactive debate on a topic based on tweets.
@@ -21,6 +31,7 @@ void main() {
   topicInput = querySelector('#topic');
   topicInput.onChange.listen(changeTopic);
   argumentTable = querySelector("#argTable");
+  resultTable = querySelector("#resultTable");
 }
 
 // Interface methods
@@ -79,7 +90,52 @@ void addArgumentRow(){
 void displayResultScreen(){
   // Presents final interface with debate results.
   restartTable();
-  loading.text = "You are ${(posScore / rowCount * 100).round()}% pro ${topic}";
+  loading.text = "You are ${(posScore / rowCount * 100).round()}% pro ${topic}\nPositive choices: ${posScore}\nNegative choices: ${rowCount-posScore}";
+  loading.children.add(Par)
+  resultTable.addRow()
+    ..addCell().text = "Chosen tweet"
+    ..addCell().text = "Sentiment"
+    ..addCell().text = "Confidence"
+    ..addCell().text = "Feature log probabilities"
+    ..addCell().text = "Not chosen tweet"
+    ..addCell().text = "Sentiment"
+    ..addCell().text = "Confidence"
+    ..addCell().text = "Feature log probabilities";
+
+  for(var i = 0; i < chosenArguments.length; i++){
+    var row = resultTable.addRow();
+    for(var arg in [chosenArguments[i], unchosenArguments[i]]) {
+      print(arg.tweet);
+      row.addCell().text = arg.tweet;
+      print("set tweet");
+      row.addCell().text = arg.isNeg ? "Negative" : "Positive";
+      print("Set sentiment");
+      row.addCell().text = arg.class_prob.toString();
+      print("Set conf");
+      String out = "";
+      var sortedKeys = arg.word_probs.keys.toList();
+      sortedKeys.sort((String a, String b) => compareWordProbs(arg.word_probs[a], arg.word_probs[b]));
+
+      print(sortedKeys);
+      for(var key in sortedKeys){
+        out += "${key}: ${arg.word_probs[key]}\n";
+      }
+      row.addCell().text = out;
+      print("Set word probs");
+    }
+  }
+
+}
+
+int compareWordProbs(double probA, double probB){
+  if(probA > probB){
+    return -1;
+  }else{
+    if(probA == probB){
+      return 0;
+    }else{
+      return 1;
+    }}
 }
 
 void makeSelection(Event e){
@@ -90,6 +146,7 @@ void makeSelection(Event e){
     if (selectedArgument.id == "pos") {
       posScore++;
     }
+
     if (rowCount % 3 == 0) {
       restartTable();
     }
@@ -97,7 +154,14 @@ void makeSelection(Event e){
       List<TableRowElement> rows = argumentTable.rows;
       TableRowElement lastArgRow = rows.elementAt(rows.length - 2);
       for (var cell in lastArgRow.cells) {
-        cell.children[0].id = "clicked";
+        if(cell.children[0].id == selectedArgument.id){
+          cell.children[0].id = "chosen-clicked";
+          chosenArguments.add(arguments[selectedArgument.text]);
+        }
+        else {
+          unchosenArguments.add(arguments[cell.children[0].text]);
+          cell.children[0].id = "clicked";
+        }
       }
     }
     addArgumentRow();
@@ -141,20 +205,14 @@ void loadingScreen(bool on){
 }
 
 //  Argument methods
-
-class Argument{
-  String tweet;
-  List<String> support;
-}
-
 void requestArguments() {
   // Requests arguments from a local server running the Python spectrum scripts.
   HttpRequest
       .getString("http://127.0.0.1:5000/spectrum/${topic}")
       .then((String jsonContents){
-    arguments = jsonDecode(jsonContents);
-    createArgumentLists();
-    addArgumentRow();
+        print(jsonContents);
+        createArgumentLists(jsonDecode(jsonContents));
+        addArgumentRow();
   })
       .catchError((Error error){
     print(error.toString());
@@ -163,14 +221,15 @@ void requestArguments() {
   loadingScreen(true);
 }
 
-void createArgumentLists() {
+void createArgumentLists(var jsonArguments) {
   loadingScreen(false);
   // Decodes arguments from server response and places them in their lists.
   positiveArguments = new List<Argument>();
   negativeArguments = new List<Argument>();
+  arguments = new Map();
   // First element in the list is the number of arguments each side has.
-  for(int i = 0; i < arguments.length; i++){
-    var jsonArgument = arguments[i];
+  for(var jsonArgument in jsonArguments){
+    print(jsonArgument);
     var argument = new Argument();
     argument.tweet = jsonArgument["tweet"];
     var support = jsonArgument["support"];
@@ -179,9 +238,28 @@ void createArgumentLists() {
       supportArgs.add(s);
     }
     argument.support = supportArgs;
+    print("class prob");
+    print(jsonArgument["class_prob"]);
+    print(jsonArgument["class_prob"].runtimeType);
+    argument.class_prob = jsonArgument["class_prob"];
+    print("class prob done");
+    var word_probs_dict = jsonArgument["word_probs"];
+    print("word dict");
+    var keys = word_probs_dict.keys.toList();
+    print("keys done");
+    Map<String, double> word_probs = new Map();
+    for(var key in keys){
+      word_probs.putIfAbsent(key, () => word_probs_dict[key]);
+    }
+    print("done");
+    argument.word_probs = word_probs;
+
+    arguments.putIfAbsent(argument.tweet, () => argument);
     if(jsonArgument["negative"]){
+      argument.isNeg = true;
       negativeArguments.add(argument);
     }else{
+      argument.isNeg = false;
       positiveArguments.add(argument);
     }
   }
