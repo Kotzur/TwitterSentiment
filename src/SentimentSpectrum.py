@@ -45,18 +45,12 @@ class SentimentSpectrum(object):
         them.
         :param tweets set of unlabelled strings
         """
-        print("Starting predictions")
         prediction_probabilities = self.classifier.predict_proba(tweets)
         sentiments = self.classifier.predict(tweets)
-        print("Startung confidences")
         confidences = [max(probs) for probs in prediction_probabilities]
         negatives = []
         positives = []
-        i = 0
         for sent, tweet, conf in zip(sentiments, tweets, confidences):
-            if i % 10 == 0:
-                print("*", end=" ", flush=True)
-            i += 1
             if sent == 0:
                 word_probs = self.get_word_probabilities(tweet, True)
                 new_tweet = Argument(t=tweet, sup=[], neg=True, prob=conf, word_probs=word_probs)
