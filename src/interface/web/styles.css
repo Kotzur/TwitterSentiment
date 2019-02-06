@@ -4,47 +4,54 @@ html, body {
   width: 100%;
   height: 100%;
   margin: 0;
-  padding: 0;
+  padding-top: 25px;
   background-color: #FFFFFF;
   font-family: 'Roboto', sans-serif;
+}
+
+#page-wrap{
+  max-width: 1800px;
+  margin: auto;
 }
 
 #loading {
   background-color: #FFFFFF;
   text-align: center;
   font-weight: bolder;
-  font-size: 46px;
+  font-size: 35px;
 }
 
 /* Table */
+
 #argTable{
   width: 100%;
   table-layout: fixed;
-  padding: 50px;
+  border-collapse: separate;
+  border-spacing: 20px;
+  /*border: 1px solid black;*/
+  /*padding: 50px;*/
 }
 
 #argTable td{
   max-width: 50%;
   width: 50%;
-  margin-right: 15px;
-  margin-left: 15px;
+  /*border: 1px solid black;*/
 }
 
 #argTable tr, #argTable th{
-  height: 50px;
   width: 50%;
+  max-width: 50%;
+  /*border: 1px solid black;*/
 }
 
 /* Buttons */
 button{
   font-size: 16px;
   color: #FFFFFF;
-
+  padding: 10px;
   display: inline-block;
   width: 100%;       /* set to 100% */
   height: 100%;      /* set to 100% */
-  padding-top: .6em;
-  padding-bottom: .6em;
   border-radius: 5px;
   border: solid #333333 1px;
   box-shadow: 2px 2px 1px #888888;
@@ -94,4 +101,40 @@ button{
 
 #resultTable td:nth-of-type(even){
   background-color: #f5f5f5;
+}
+
+#prev-page {
+  background-color: #AAAAAA;
+  font-size: 9px;
+  height: 10px;
+  max-height: 10px;
+  text-align: center;
+  padding: 1px;
+}
+
+#progress{
+  color: #000000;
+  font-weight: bold;
+  font-size: 16px;
+  text-align: center;
+}
+
+#instructions{
+  max-width: 800px;
+  font-size: 14px;
+  text-align: left;
+}
+
+#instructions p{
+  margin: 5px;
+}
+
+#study-description{
+  max-width: 800px;
+  font-size: 20px;
+  margin:auto;
+}
+
+#hidden{
+  visibility: hidden;
 }

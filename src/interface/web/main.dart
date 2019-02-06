@@ -2,7 +2,10 @@ import 'dart:html';
 import 'dart:convert';
 
 InputElement topicInput;
-ParagraphElement loading;
+DivElement loading;
+ParagraphElement progress;
+DivElement instructions;
+ParagraphElement studyDescription;
 List<Argument> positiveArguments;
 List<Argument> negativeArguments;
 List<Argument> chosenArguments = [];
@@ -32,6 +35,9 @@ void main() {
   topicInput.onChange.listen(changeTopic);
   argumentTable = querySelector("#argTable");
   resultTable = querySelector("#resultTable");
+  progress = querySelector("#progress");
+  instructions = querySelector("#instructions");
+  studyDescription = querySelector("#study-description");
 }
 
 // Interface methods
@@ -40,53 +46,12 @@ void changeTopic(Event e){
   // Responds to new topic choice.
   topic = topicInput.value;
   print("New topic: ${topic}");
-  restartTables();
+  resultTable.children.clear();
+  loading.children.clear();
+  argumentTable.children.clear();
   requestArguments();
   rowCount = 0;
   posScore = 0;
-}
-
-void addArgumentRow(){
-  // Displays next row of arguments in the debate.
-  if(rowCount != 0){
-    argumentTable.deleteRow(-1);
-  }
-  if(negativeArguments.isNotEmpty && positiveArguments.isNotEmpty) {
-    TableRowElement opinionRow = argumentTable.insertRow(-1);
-    var negArg = negativeArguments.removeLast();
-    var posArg = positiveArguments.removeLast();
-    opinionRow.insertCell(0)
-      ..colSpan = 3
-      ..children.add(new ButtonElement()
-        ..text = negArg.tweet
-        ..onClick.listen(makeSelection)
-        ..onMouseOver.listen(displaySupport)
-        ..onMouseOut.listen(hideSupport)
-        ..id = "neg");
-    opinionRow.insertCell(1)
-      ..colSpan = 3
-      ..children.add(new ButtonElement()
-        ..text = posArg.tweet
-        ..onClick.listen(makeSelection)
-        ..onMouseOver.listen(displaySupport)
-        ..onMouseOut.listen(hideSupport)
-        ..id = "pos");
-
-    TableRowElement supportRow = argumentTable.insertRow(-1);
-    supportRow.id = "support";
-    int i = 0;
-    for (var arg in [negArg, posArg]) {
-      for (var sup in arg.support) {
-        supportRow.insertCell(i)
-          ..text = sup
-          ..id = i < 3 ? "neg-sup" : "pos-sup";
-        i++;
-      }
-    }
-  }
-  else{
-    displayResultScreen();
-  }
 }
 
 void makeSelection(Event e){
@@ -112,9 +77,53 @@ void makeSelection(Event e){
     }
 
     if (rowCount % 3 == 0) {
-      restartTables();
+      moveToNextPage();
     }
     addArgumentRow();
+  }
+}
+
+void addArgumentRow(){
+  progress.text = "Page ${((rowCount + 1)/3).ceil()} / ${(arguments.length/6).ceil()}";
+  // Displays next row of arguments in the debate.
+  if(rowCount != 0 && rowCount %  3 != 0){
+    argumentTable.deleteRow(-1);
+  }
+  if(negativeArguments.isNotEmpty && positiveArguments.isNotEmpty) {
+    TableRowElement opinionRow = argumentTable.addRow();
+    var negArg = negativeArguments.removeLast();
+    var posArg = positiveArguments.removeLast();
+    opinionRow.addCell()
+      ..colSpan = 3
+      ..children.add(new ButtonElement()
+        ..text = negArg.tweet
+        ..onClick.listen(makeSelection)
+        ..onMouseOver.listen(displaySupport)
+        ..onMouseOut.listen(hideSupport)
+        ..id = "neg");
+    opinionRow.addCell()
+      ..colSpan = 3
+      ..children.add(new ButtonElement()
+        ..text = posArg.tweet
+        ..onClick.listen(makeSelection)
+        ..onMouseOver.listen(displaySupport)
+        ..onMouseOut.listen(hideSupport)
+        ..id = "pos");
+
+    TableRowElement supportRow = argumentTable.addRow();
+    supportRow.id = "support";
+    int i = 0;
+    for (var arg in [negArg, posArg]) {
+      for (var sup in arg.support) {
+        supportRow.addCell()
+          ..text = sup
+          ..id = i < 3 ? "neg-sup" : "pos-sup";
+        i++;
+      }
+    }
+  }
+  else{
+    displayResultScreen();
   }
 }
 
@@ -140,16 +149,31 @@ void hideSupport(Event e){
   }
 }
 
-void restartTables(){
-  // Clears the interface from previous arguments.
+void moveToNextPage(){
+  // Clears the interface from previous arguments and adds a bar on top meaning
+  // to give the pages a connected structure.
   argumentTable.children.clear();
-  resultTable.children.clear();
+  for(var i = 0; i < rowCount / 3; i++) {
+    var row = argumentTable.addRow();
+    row.addCell()
+      ..id="prev-page"
+      ..colSpan=6
+      ..children.add(new ParagraphElement()..text =
+          "${i+1} / ${(arguments.length/6).ceil()} completed");
+    print("Added row");
+  }
 }
 
 void displayResultScreen(){
   // Presents final interface with debate results.
-  restartTables();
-  loading.text = "You are ${(posScore / rowCount * 100).round()}% pro ${topic}\nPositive choices: ${posScore}\nNegative choices: ${rowCount-posScore}";
+  progress.text = "";
+  argumentTable.children.clear();
+  loading.children.add(new ParagraphElement()
+                        ..text = "You are ${(posScore / rowCount * 100).round()}% pro ${topic}");
+  loading.children.add(new ParagraphElement()
+                        ..text = "Positive choices: ${posScore}");
+  loading.children.add(new ParagraphElement()
+                        ..text = "Negative choices: ${rowCount-posScore}");
   resultTable.addRow()
     ..addCell().text = "Chosen tweet"
     ..addCell().text = "Sentiment"
@@ -181,7 +205,6 @@ void displayResultScreen(){
   }
 }
 
-
 int compareWordProbs(double probA, double probB){
   if(probA > probB){
     return -1;
@@ -193,32 +216,44 @@ int compareWordProbs(double probA, double probB){
     }}
 }
 
-void loadingScreen(bool on){
-  if(on){
-    loading.text = "Loading...";
-  }
-  else{
-    loading.text = "";
-  }
+void addLoadingText(String displayText){
+  loading.children.add(new ParagraphElement()
+                        ..text = displayText);
+}
+
+void clearLoadingText(){
+  loading.children.clear();
+}
+
+void setInstructions(){
+  studyDescription.id = "hidden";
+  instructions.children.add(new ParagraphElement()..text="1. Input a topic of interest and press Enter.");
+  instructions.children.add(new ParagraphElement()..text="2. At each step, select the tweet you agree with most.");
+  instructions.children.add(new ParagraphElement()..text="3. Hover over arguments to display their supporting tweets.");
 }
 
 //  Argument methods
 void requestArguments() {
   // Requests arguments from a local server running the Python spectrum scripts.
+  addLoadingText("Sending response to server...");
   HttpRequest
       .getString("http://127.0.0.1:5000/spectrum/${topic}")
       .then((String jsonContents){
+        addLoadingText("Received responses.");
+        addLoadingText("Creating argument list...");
         createArgumentLists(jsonDecode(jsonContents));
+        addLoadingText("Done.");
+        clearLoadingText();
+        setInstructions();
         addArgumentRow();
   })
       .catchError((Error error){
     print(error.toString());
   });
-  loadingScreen(true);
+  addLoadingText("Conntacting Twitter API...");
 }
 
 void createArgumentLists(var jsonArguments) {
-  loadingScreen(false);
   // Decodes arguments from server response and places them in their lists.
   positiveArguments = new List<Argument>();
   negativeArguments = new List<Argument>();
