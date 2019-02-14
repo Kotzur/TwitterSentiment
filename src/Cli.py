@@ -7,7 +7,7 @@ class Cli(object):
         """The command line interface."""
         self.central = ""
         self.tweets = []
-        self.spectrum = SentimentSpectrum()
+        self.spectrum = SentimentSpectrum(build_new=True)
         self.topic = ""
 
     def init_prompt(self):
@@ -24,7 +24,7 @@ class Cli(object):
         print("Enter 'M' to display more.")
         print("Enter Tweet number to explore it.")
         print("Enter a new Tweet you want to explore.")
-        print("Enter 'N' to change a topic.")
+        print("Enter 'N' to change a topic.")gi 
         print("Enter 0 to exit.")
         return input()
 
@@ -34,7 +34,7 @@ class Cli(object):
         print("Alternative views:")
         alternatives = self.spectrum.get_alternatives(self.central, skip)
         for i, alter in enumerate(alternatives):
-            print(f"{i + skip}. {alter}")
+            print(f"{i + 1 + skip}. {alter}")
 
     def get_tweet(self, index):
         """Returns a tweet with index from alternative tweets printed."""
