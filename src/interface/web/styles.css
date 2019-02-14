@@ -14,7 +14,7 @@ html, body {
   margin: auto;
 }
 
-#loading {
+#loading, #result{
   background-color: #FFFFFF;
   text-align: center;
   font-weight: bolder;

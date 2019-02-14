@@ -6,6 +6,7 @@ DivElement loading;
 ParagraphElement progress;
 DivElement instructions;
 ParagraphElement studyDescription;
+ParagraphElement result;
 List<Argument> positiveArguments;
 List<Argument> negativeArguments;
 List<Argument> chosenArguments = [];
@@ -31,6 +32,7 @@ class Argument{
 void main() {
   // Run an interactive debate on a topic based on tweets.
   loading = querySelector("#loading");
+  result = querySelector("#result");
   topicInput = querySelector('#topic');
   topicInput.onChange.listen(changeTopic);
   argumentTable = querySelector("#argTable");
@@ -47,9 +49,12 @@ void changeTopic(Event e){
   topic = topicInput.value;
   print("New topic: ${topic}");
   resultTable.children.clear();
-  loading.children.clear();
+  result.children.clear();
   argumentTable.children.clear();
+  instructions.children.clear();
   requestArguments();
+  chosenArguments = [];
+  unchosenArguments = [];
   rowCount = 0;
   posScore = 0;
 }
@@ -168,11 +173,11 @@ void displayResultScreen(){
   // Presents final interface with debate results.
   progress.text = "";
   argumentTable.children.clear();
-  loading.children.add(new ParagraphElement()
+  result.children.add(new ParagraphElement()
                         ..text = "You are ${(posScore / rowCount * 100).round()}% pro ${topic}");
-  loading.children.add(new ParagraphElement()
+  result.children.add(new ParagraphElement()
                         ..text = "Positive choices: ${posScore}");
-  loading.children.add(new ParagraphElement()
+  result.children.add(new ParagraphElement()
                         ..text = "Negative choices: ${rowCount-posScore}");
   resultTable.addRow()
     ..addCell().text = "Chosen tweet"
