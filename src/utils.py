@@ -1,9 +1,13 @@
 import csv
+import json
 import math
 import os
 import random
 import re
+import sys
 
+import tweepy
+import jsonpickle
 from TwitterSearch import *
 from scipy.stats import binom
 import numpy as np
@@ -200,50 +204,98 @@ def load_airline_tweets():
     return clean_reviews
 
 
-# TODO: Get extended versions of Tweets from the new, longer character standard.
 def get_dataset(topic):
     """Load from Tweeter a set of tweets on a specific topic.
     Use the topic to query as a hashtag and fetch as many as possible tweets through the Twitter API. Prepare them for
     processing.
-    :param topic hashtag to search for.
+    :param topic query used to search twitter.
     :return dataset on the topic ready for processing.
     """
+    topic_path = os.path.join(DATA_DIR, "topics", topic)
+    if os.path.isfile(topic_path):
+        print(f"Reading local file from: {topic_path}")
+        with open(topic_path, "r") as file:
+            tweets = json.load(file)
+        print(f"length of this loaded list: {len(tweets)}")
+        return tweets
+    else:
+        return request_tweets_from_twitter(topic)
+
+
+def request_tweets_from_twitter(topic, request_number=100):
+    # Replace the API_KEY and API_SECRET with your application's key and secret.
+    #api key api secret
+    api_key, api_secret, _, _ = get_twitter_keys()
+    auth = tweepy.AppAuthHandler(api_key, api_secret)
+
+    # Tweepy holds on until the end of the window if it gets rate limit messages back.
+    api = tweepy.API(auth, wait_on_rate_limit=True,
+                     wait_on_rate_limit_notify=True)
+
+    if not api:
+        print("Can't Authenticate")
+        sys.exit(-1)
+
+    search_query = topic
+    max_tweets = request_number
+    tweets_per_page = 100  # this is the max the API permits
+    file_name = 'tweets.txt'
+
+    # If results from a specific ID onwards are reqd, set since_id to that ID.
+    # else default to no lower limit, go as far back as API allows
+    sinceId = None
+
+    # If results only below a specific ID are, set max_id to that ID.
+    # else default to no upper limit, start from the most recent tweet matching the search query.
+    max_id = -1
+
+    tweet_count = 0
     dataset = set([])
-    try:
-        tso = TwitterSearchOrder()
-        tso.set_keywords([topic])
-        tso.set_language('en')
-        tso.set_include_entities(False)
-        tso.set_count(100)
-
-        # Support extended tweets.
-        search_url = tso.create_search_url() + "&tweet_mode=extended"
-        tso.set_search_url(search_url)
-
-        c_key, c_secret, a_token, a_token_secret = get_twitter_keys()
-
-        ts = TwitterSearch(
-            consumer_key=c_key,
-            consumer_secret=c_secret,
-            access_token=a_token,
-            access_token_secret=a_token_secret,
-            tweet_mode="extended"
-        )
-
-        iterable = ts.search_tweets_iterable(tso)
-        for i, tweet in enumerate(iterable):
-            if "retweeted_status" in tweet:
-                clean = clean_data(tweet['retweeted_status']['full_text'])
-            else:
-                clean = clean_data(tweet['full_text'])
-            if clean.startswith("rt"):
-                clean = clean[3:]
-            if clean not in dataset:
-                dataset.add(clean)
-        print("Dataset length:", len(dataset))
-    except TwitterSearchException as e:
-        print("Twiiter Exception:", e)
-
+    print(f"Downloading max {max_tweets} tweets")
+    with open(file_name, 'w') as f:
+        while tweet_count < max_tweets:
+            try:
+                if max_id <= 0:
+                    if not sinceId:
+                        new_tweets = api.search(q=search_query,
+                                                count=tweets_per_page,
+                                                tweet_mode="extended")
+                    else:
+                        new_tweets = api.search(q=search_query,
+                                                count=tweets_per_page,
+                                                tweet_mode="extended",
+                                                since_id=sinceId)
+                else:
+                    if not sinceId:
+                        new_tweets = api.search(q=search_query,
+                                                count=tweets_per_page,
+                                                tweet_mode="extended",
+                                                max_id=str(max_id - 1))
+                    else:
+                        new_tweets = api.search(q=search_query,
+                                                count=tweets_per_page,
+                                                tweet_mode="extended",
+                                                max_id=str(max_id - 1),
+                                                since_id=sinceId)
+                if not new_tweets:
+                    print("No more tweets found.")
+                    break
+                for tweet in new_tweets:
+                    if "retweeted_status" in tweet._json:
+                        clean = clean_data(tweet._json['retweeted_status']['full_text'])
+                    else:
+                        clean = clean_data(tweet._json['full_text'])
+                    if clean.startswith("rt"):
+                        clean = clean[3:]
+                    if clean not in dataset:
+                        dataset.add(clean)
+                tweet_count += len(new_tweets)
+                print(f"Downloaded {tweet_count} tweets")
+                max_id = new_tweets[-1].id
+            except tweepy.TweepError as e:
+                # Just exit if any error
+                print("Error from Twitter API: " + str(e))
+                break
     return dataset
 
 
@@ -282,9 +334,12 @@ def clean_data(text):
     # Replace breaks with spaces
     norm_text = norm_text.replace('<br />', ' ')
     norm_text = re.sub("(http|ftp|https)://([\w_-]+(?:(?:\.[\w_-]+)+))([\w.,@?^=%&:/~+#-]*[\w@?^=%&/~+#-])?", "link", norm_text)
+    norm_text = re.sub("&amp;", "&", norm_text)
     # Pad punctuation with spaces on both sides
     norm_text = re.sub(r"([\.\",\(\)!\?;:(...)])", " \\1 ", norm_text)
-    return re.sub(r"@\w+", "@username", norm_text)
+    norm_text = re.sub(r"@\w+", "@username", norm_text)
+    norm_text = re.sub(r"(@username)((\s)*@username)+", "@username", norm_text)
+    return norm_text
 
 
 def tokenize(text):
@@ -293,3 +348,10 @@ def tokenize(text):
     :return list of words in text
     """
     return [word for word in text.split()]
+
+
+def save_dataset(topic):
+    tweets = request_tweets_from_twitter(topic, request_number=500)
+    filename = os.path.join(DATA_DIR, "topics", topic.replace(" ", "_"))
+    with open(filename, "w+") as file:
+        json.dump(list(tweets), file)

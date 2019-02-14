@@ -11,13 +11,16 @@ name = "pypi"
 
 [packages]
 
-numpy= "*"
-scipy= "*"
+numpy = "*"
+scipy = "*"
 scikit-learn = "*"
 twittersearch = "*"
 sets = "*"
 flask = "*"
-flask_cors = "*"
+flask-cors = "*"
+jsonpickle = "*"
+tweepy = "*"
+
 
 [requires]
 
