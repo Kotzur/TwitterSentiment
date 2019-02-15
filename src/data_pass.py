@@ -1,5 +1,5 @@
-import utils
-from SentimentSpectrum import SentimentSpectrum
+import handle_datasets
+from sentiment_spectrum import SentimentSpectrum
 
 from flask import Flask
 from flask_cors import CORS
@@ -14,7 +14,7 @@ in_making = False
 def get_spectrum(topic):
     """Responds to topic requests with a json list of argument objects for a given topic."""
     spectrum = SentimentSpectrum()
-    dataset = utils.get_dataset(topic)
+    dataset = handle_datasets.get_dataset(topic)
     spectrum.create_spectrum(dataset)
     return spectrum.get_json_arguments()
 # Check if using the tflrd gives better resurts

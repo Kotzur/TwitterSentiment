@@ -3,7 +3,7 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
 from sklearn.svm import SVC
 
-import utils
+import handle_datasets
 from enum import Enum
 
 import pickle
@@ -24,8 +24,8 @@ def train_bow(train_set):
     :param train_set dataset which the words are counted from.
     :return dictionary of words mapping to sentiment score.
     """
-    positive_tweet_words = [word for line in train_set for word in utils.tokenize(line[0]) if line[1] == 1]
-    negative_tweet_words = [word for line in train_set for word in utils.tokenize(line[0]) if line[1] == 0]
+    positive_tweet_words = [word for line in train_set for word in handle_datasets.tokenize(line[0]) if line[1] == 1]
+    negative_tweet_words = [word for line in train_set for word in handle_datasets.tokenize(line[0]) if line[1] == 0]
     word_sentiment_count = {}
     for word in positive_tweet_words:
         if word in word_sentiment_count.keys():
@@ -54,7 +54,7 @@ def predict_bow(word_count, test):
     predictions = []
     for review, sentiment in test:
         score = 0
-        tokens = utils.tokenize(review)
+        tokens = handle_datasets.tokenize(review)
         for token in tokens:
             if token in word_count.keys():
                 score += word_count[token]
@@ -131,7 +131,7 @@ class Classifier:
         if not (self.unigrams or self.bigrams):
             print("At least one ngram option must be chosen. Unigrams will be used as default.")
 
-        folds = utils.round_robin_split(dataset)
+        folds = handle_datasets.round_robin_split(dataset)
         predictions = []
         actual = []
         print(self.type)
@@ -161,5 +161,5 @@ class Classifier:
         :param dataset collection of tuples (tweet text, sentiment 0 or 1).
         """
         classifier = self.train_classifier(dataset)
-        with open(utils.MODEL_PATH, "wb") as file:
+        with open(handle_datasets.MODEL_PATH, "wb") as file:
             pickle.dump(classifier, file)

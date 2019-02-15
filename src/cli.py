@@ -1,5 +1,5 @@
-from SentimentSpectrum import SentimentSpectrum
-import utils as utils
+from sentiment_spectrum import SentimentSpectrum
+import handle_datasets
 
 
 class Cli(object):
@@ -14,7 +14,7 @@ class Cli(object):
         """Prompts to choose a new topic."""
         self.topic = input("Enter topic: ")
         self.central = input("Enter a tweet you agree with: ")
-        dataset = utils.get_dataset(self.topic)
+        dataset = handle_datasets.get_dataset(self.topic)
         self.spectrum.create_spectrum(dataset)
         self.print_alternative_views()
 
@@ -24,7 +24,7 @@ class Cli(object):
         print("Enter 'M' to display more.")
         print("Enter Tweet number to explore it.")
         print("Enter a new Tweet you want to explore.")
-        print("Enter 'N' to change a topic.")gi 
+        print("Enter 'N' to change a topic.")
         print("Enter 0 to exit.")
         return input()
 

@@ -1,6 +1,6 @@
-import utils as utils
-from Classifier import Classifier
-from Classifier import Type
+import handle_datasets
+from classifier import Classifier
+from classifier import Type
 import pickle
 import json
 import math
@@ -23,7 +23,7 @@ class SentimentSpectrum(object):
         if build_new:
             self.build_classifier()
 
-        with open(utils.MODEL_PATH, "rb") as file:
+        with open(handle_datasets.MODEL_PATH, "rb") as file:
             self.classifier = pickle.load(file)
 
         # Spectrum from most prob negative to most prob positive arguments.
@@ -35,7 +35,7 @@ class SentimentSpectrum(object):
 
     def build_classifier(self):
         """Create a new classifier and pickle it."""
-        dataset = utils.load_anonymized_sentiment_tweets(small=False)
+        dataset = handle_datasets.load_anonymized_sentiment_tweets(small=False)
         classifier = Classifier(unigrams=True, bigrams=False, classifier_type=Type.NB)
         classifier.train_and_pickle(dataset)
 
