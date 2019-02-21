@@ -1,5 +1,5 @@
-import 'dart:html';
 import 'dart:convert';
+import 'dart:html';
 
 InputElement topicInput;
 DivElement loading;
@@ -27,6 +27,16 @@ class Argument{
   List<String> support;
   var class_prob;
   var word_probs;
+
+  Map toJsonMap(){
+    return {
+      "tweet": tweet,
+      "negative": isNeg.toString(),
+      "support": support.toString(),
+      "class_prob": class_prob.toString(),
+      "word_probs" : word_probs.toString()
+    };
+  }
 }
 
 void main() {
@@ -172,40 +182,22 @@ void moveToNextPage(){
 void displayResultScreen(){
   // Presents final interface with debate results.
   progress.text = "";
+  writeResultsToFile();
   argumentTable.children.clear();
   result.children.add(new ParagraphElement()
-                        ..text = "You are ${(posScore / rowCount * 100).round()}% pro ${topic}");
+                        ..text = "Topic: ${topic}");
   result.children.add(new ParagraphElement()
                         ..text = "Positive choices: ${posScore}");
   result.children.add(new ParagraphElement()
                         ..text = "Negative choices: ${rowCount-posScore}");
   resultTable.addRow()
     ..addCell().text = "Chosen tweet"
-    ..addCell().text = "Sentiment"
-    ..addCell().text = "Confidence"
-    ..addCell().text = "Feature log probabilities"
-    ..addCell().text = "Not chosen tweet"
-    ..addCell().text = "Sentiment"
-    ..addCell().text = "Confidence"
-    ..addCell().text = "Feature log probabilities";
-
-  print("Chosen arg length ${chosenArguments.length}");
-  print("Row count ${rowCount}");
-  print("Unchosen agr length ${unchosenArguments.length}");
+    ..addCell().text = "Not chosen tweet";
 
   for(var i = 0; i < chosenArguments.length; i++){
     var row = resultTable.addRow();
     for(var arg in [chosenArguments[i], unchosenArguments[i]]) {
       row.addCell().text = arg.tweet;
-      row.addCell().text = arg.isNeg ? "Negative" : "Positive";
-      row.addCell().text = arg.class_prob.toString();
-      var sortedKeys = arg.word_probs.keys.toList();
-      sortedKeys.sort((String a, String b) => compareWordProbs(arg.word_probs[a], arg.word_probs[b]));
-      String out = "";
-      for(var key in sortedKeys){
-        out += "${key}: ${arg.word_probs[key]}\n";
-      }
-      row.addCell().text = out;
     }
   }
 }
@@ -236,6 +228,31 @@ void setInstructions(){
   instructions.children.add(new ParagraphElement()..text="2. At each step, select the tweet you agree with most.");
   instructions.children.add(new ParagraphElement()..text="3. Hover over arguments to display their supporting tweets.");
 }
+
+void writeResultsToFile(){
+  var now = new DateTime.now();
+  var date = "${now.hour}-${now.minute}-${now.day}-${now.month}-${now.year}";
+  String filename = "${topic}-${date}.json";
+
+  var jsonData = {"chosen_args":[],
+                  "unchosen_args":[]};
+
+  for(var argument in chosenArguments){
+    jsonData["chosen_args"].add(argument.toJsonMap());
+  }
+  for(var argument in unchosenArguments){
+    jsonData["unchosen_args"].add(argument.toJsonMap());
+  }
+
+  Map<String, String> encodedJson = {"chosen_args": "", "unchosen_args": ""};
+  encodedJson["chosen_args"] = jsonEncode(jsonData["chosen_args"]);
+  encodedJson["unchosen_args"] = jsonEncode(jsonData["unchosen_args"]);
+
+  HttpRequest
+      .postFormData(
+        "http://127.0.0.1:5000/results/${filename}", encodedJson);
+}
+
 
 //  Argument methods
 void requestArguments() {

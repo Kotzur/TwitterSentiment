@@ -2,11 +2,11 @@
 # Shell script to run the Dart GUI for user study.
 
 # Run the flask server.
-pipenv run python data_pass.py &
+pipenv run python server.py &
 
 # Host the interface
 URL="$PWD/interface/build/index.html"
-if which xdg-open > /dev/null
+if which xdg-open > /xdev/null
 then
   echo "xdg"
   xdg-open "$URL"
