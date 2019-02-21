@@ -1,4 +1,4 @@
-from handle_datasets import load_anonymized_sentiment_tweets, create_small_dataset
+from handle_datasets import load_anonymized_sentiment_tweets
 import metrics
 from classifier import Classifier, Type
 
@@ -7,16 +7,19 @@ from classifier import Classifier, Type
 def compare_between_models():
     tweets = load_anonymized_sentiment_tweets()
     print("Tweets:", tweets[:2])
-    classifier = Classifier(unigrams=True, bigrams=True, classifier_type=Type.BOW)
-    act, bow_pred = classifier.classify(tweets)
+    classifier = Classifier(unigrams=True, bigrams=True, classifier_type=Type.BOW).evaulate(tweets)
+    act, bow_pred = classifier.ten_fold_cross_validation(tweets)
+    print("BOW")
     metrics.accuracy(act, bow_pred)
 
-    classifier = Classifier(unigrams=True, bigrams=True, classifier_type=Type.NB)
-    act, nb_pred = classifier.classify(tweets)
+    classifier = Classifier(unigrams=True, bigrams=True, classifier_type=Type.NB).evaulate(tweets)
+    act, nb_pred = classifier.ten_fold_cross_validation(tweets)
+    print("NB")
     metrics.accuracy(act, nb_pred)
 
-    classifier = Classifier(unigrams=True, bigrams=True, classifier_type=Type.SVM)
-    act, svm_pred = classifier.classify(tweets)
+    classifier = Classifier(unigrams=True, bigrams=True, classifier_type=Type.SVM).evaulate(tweets)
+    act, svm_pred = classifier.ten_fold_cross_validation(tweets)
+    print("SVM")
     metrics.accuracy(act, svm_pred)
 
     print("BOW and NB")
@@ -32,37 +35,24 @@ def compare_between_models():
 def compare_nb():
     tweets = load_anonymized_sentiment_tweets()
     print("unigrams")
-    classifier = Classifier(unigrams=True, bigrams=False, classifier_type=Type.NB)
-    act, nb_pred = classifier.classify(tweets)
-    metrics.accuracy(act, nb_pred)
+    Classifier(unigrams=True, bigrams=False, classifier_type=Type.NB).evaulate(tweets)
 
     print("bigrams")
-    classifier = Classifier(unigrams=False, bigrams=True, classifier_type=Type.NB)
-    act, nb_pred = classifier.classify(tweets)
-    metrics.accuracy(act, nb_pred)
+    Classifier(unigrams=False, bigrams=True, classifier_type=Type.NB).evaulate(tweets)
 
     print("unigrams and bigrams")
-    classifier = Classifier(unigrams=True, bigrams=True, classifier_type=Type.NB)
-    act, nb_pred = classifier.classify(tweets)
-    metrics.accuracy(act, nb_pred)
+    Classifier(unigrams=True, bigrams=True, classifier_type=Type.NB).evaulate(tweets)
 
 def compare_svm():
     tweets = load_anonymized_sentiment_tweets()
     print("unigram")
-    classifier = Classifier(unigrams=True, bigrams=False, classifier_type=Type.SVM)
-    act, svm_pred = classifier.classify(tweets)
-    metrics.accuracy(act, svm_pred)
+    Classifier(unigrams=True, bigrams=False, classifier_type=Type.SVM).evaulate(tweets)
 
     print("bigrams")
-    classifier = Classifier(unigrams=False, bigrams=True, classifier_type=Type.SVM)
-    act, svm_pred = classifier.classify(tweets)
-    metrics.accuracy(act, svm_pred)
+    Classifier(unigrams=False, bigrams=True, classifier_type=Type.SVM).evaulate(tweets)
 
     print("unigrams and bigrams")
-    classifier = Classifier(unigrams=True, bigrams=True, classifier_type=Type.SVM)
-    act, svm_pred = classifier.classify(tweets)
-    metrics.accuracy(act, svm_pred)
-
+    Classifier(unigrams=True, bigrams=True, classifier_type=Type.SVM).evaulate(tweets)
 
 if __name__ == "__main__":
     compare_svm()

@@ -8,6 +8,8 @@ from enum import Enum
 
 import pickle
 
+import metrics
+
 
 class Type(Enum):
     """Type enum for classifiers available."""
@@ -66,7 +68,7 @@ def predict_bow(word_count, test):
 
 
 class Classifier:
-    def __init__(self, classifier_type=Type.NB, unigrams=True, bigrams=False, presence=True, calibrating=False):
+    def __init__(self, classifier_type=Type.NB, unigrams=True, bigrams=False, presence=True, calibrating=False, tfidf=True):
         """Represents any type of sentiment classifier with configurable settings.
         The classifier type is one of the Type class enums. For each, the type of tokens considered and the way of counting
         and testing them can be modified.
@@ -81,6 +83,7 @@ class Classifier:
         self.unigrams = unigrams        # Use unigrams as features.
         self.bigrams = bigrams          # Use bigrams as features.
         self.presence = presence        # Use presence (binary) or frequency as feature count.
+        self.tfidf = tfidf              # Use TFIDF downscaling.
 
     def train_classifier(self, train_set):
         """Train the classifier.
@@ -95,13 +98,20 @@ class Classifier:
             max_ngram = 2 if self.bigrams else 1
             feature_extractor = CountVectorizer(binary=self.presence,
                                                 ngram_range=(min_ngram, max_ngram))
+
             # Alpha is 1 for Laplace smoothing.
             # Linear kernel gives best results for this type of classification.
             # Need to specify gamma because it will soon be depreciated and otherwise it throws warnings.
             clf = SVC(gamma='auto', kernel='linear') if self.type == Type.SVM else MultinomialNB(alpha=1)
-            pipeline = Pipeline([('vect', feature_extractor),
+
+            if self.tfidf:
+                pipeline = Pipeline([('vect', feature_extractor),
                                  ('tfidf', TfidfTransformer()),
                                  ('clf', clf)])
+            else:
+                pipeline = Pipeline([('vect', feature_extractor),
+                                     ('clf', clf)])
+
             pipeline.fit([t[0] for t in train_set], [t[1] for t in train_set])
             return pipeline
 
@@ -122,7 +132,7 @@ class Classifier:
                 actual.append(t[1])
         return actual, predictions
 
-    def classify(self, dataset):
+    def ten_fold_cross_validation(self, dataset):
         """Handle the dataset and use it for evaluating the classifier with either 10-fold cross-validation or the
         validation set.
         :param dataset collection of tuples (tweet text, sentiment 0 or 1).
@@ -155,6 +165,10 @@ class Classifier:
                 predictions.extend(pred)
         print("\n")
         return actual, predictions
+
+    def evaulate(self, dataset):
+        act, pred = self.ten_fold_cross_validation(dataset)
+        return metrics.accuracy(act, pred)
 
     def train_and_pickle(self, dataset):
         """Train the classifier with a dataset and pickle it for reuse.
