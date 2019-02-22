@@ -25,7 +25,7 @@ def get_spectrum(topic):
 def dump_results(filename):
     """Writes details of arguments from a complete session."""
     json_data = request.form
-    with open(os.path.join(handle_datasets.DATA_DIR, filename), "w+") as file:
+    with open(os.path.join(handle_datasets.DATA_DIR, "results", filename), "w+") as file:
         json.dump(json_data, file)
     return "All good"
 
