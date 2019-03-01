@@ -1,3 +1,5 @@
+import random
+
 import handle_datasets
 from classifier import Classifier
 from classifier import Type
@@ -114,17 +116,35 @@ class SentimentSpectrum(object):
         then JSON serialised.
         :return json list of argument objects 9 negative followed by 9 positive.
         """
-        # Assume that one argument consists of one main tweet and 3 supporting tweets = 4
         max_argument_count = min(len(self.positive) // 4, len(self.negative) // 4, 9)
 
         main_indecies = [4 * i for i in range(0, max_argument_count)]
 
-        arguments = self.get_supporting_arguments(main_indecies)
+        arguments = self.assign_supporting_arguments(main_indecies)
 
-        # First element of the list is the number of arguments being sent.
         return json.dumps([arg.__dict__ for arg in arguments])
 
-    def get_supporting_arguments(self, main_indecies):
+    def get_random_argument(self):
+        rand_arg = random.choice(self.positive + self.negative)
+        if rand_arg in self.positive:
+            index = self.positive.index(rand_arg)
+            arg_list = self.positive
+        else:
+            index = self.negative.index(rand_arg)
+            arg_list = self.negative
+        sup = []
+        for sup_number in range(1, 4):
+            if index + sup_number >= len(arg_list):
+                print("Length", len(arg_list))
+                print("INdex", index)
+                print("supnumber", sup_number)
+                sup.append(arg_list[len(arg_list) - sup_number - 1].tweet)
+            else:
+                sup.append(arg_list[index + sup_number].tweet)
+        rand_arg.support = sup
+        return json.dumps(rand_arg.__dict__)
+
+    def assign_supporting_arguments(self, main_indecies):
         arguments = []
         for argument_list in [self.negative, self.positive]:
             for i, index in enumerate(main_indecies):

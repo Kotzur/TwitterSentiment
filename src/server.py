@@ -1,5 +1,7 @@
+import argparse
 import json
 import os
+import random
 
 import handle_datasets
 from sentiment_spectrum import SentimentSpectrum
@@ -25,10 +27,28 @@ def get_spectrum(topic):
 def dump_results(filename):
     """Writes details of arguments from a complete session."""
     json_data = request.form
-    with open(os.path.join(handle_datasets.DATA_DIR, "results", filename), "w+") as file:
-        json.dump(json_data, file)
+    handle_datasets.save_results(json_data, filename)
     return "All good"
 
 
+@app.route('/random/<string:topic>', methods=['GET'])
+def get_random_tweet(topic):
+    """Passes a random tweet not on topic."""
+    topic_list = ["Trump", "NRA", "Obamacare", "Miley Cyrus", "Antivax",
+                  "Immigration", "Israel", "Video game violence", "Voting age"]
+    random_topic = random.choice(topic_list)
+    while random_topic == topic:
+        random_topic = random.choice(topic_list)
+
+    dataset = handle_datasets.get_dataset(random_topic)
+    spectrum = SentimentSpectrum()
+    spectrum.create_spectrum(dataset)
+    return spectrum.get_random_argument()
+
+
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Run the server for the user study")
+    parser.add_argument("--study", "-s", action="store", help="Study number.")
+    args = parser.parse_args()
+    handle_datasets.study_number = int(args.study)
     app.run()

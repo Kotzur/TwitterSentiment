@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:html';
+import 'dart:math';
 
 InputElement topicInput;
 DivElement loading;
@@ -7,11 +8,14 @@ ParagraphElement progress;
 DivElement instructions;
 ParagraphElement studyDescription;
 ParagraphElement result;
+
 List<Argument> positiveArguments;
 List<Argument> negativeArguments;
 List<Argument> chosenArguments = [];
 List<Argument> unchosenArguments = [];
 Map<String, Argument> arguments;
+
+Argument randomArgument;
 
 TableElement argumentTable;
 TableElement resultTable;
@@ -24,6 +28,7 @@ String topic;
 class Argument{
   String tweet;
   bool isNeg;
+  bool isRand;
   List<String> support;
   var class_prob;
   var word_probs;
@@ -32,6 +37,7 @@ class Argument{
     return {
       "tweet": tweet,
       "negative": isNeg.toString(),
+      "random": isRand.toString(),
       "support": support.toString(),
       "class_prob": class_prob.toString(),
       "word_probs" : word_probs.toString()
@@ -62,7 +68,7 @@ void changeTopic(Event e){
   result.children.clear();
   argumentTable.children.clear();
   instructions.children.clear();
-  requestArguments();
+  requestRandomArgument();
   chosenArguments = [];
   unchosenArguments = [];
   rowCount = 0;
@@ -197,7 +203,11 @@ void displayResultScreen(){
   for(var i = 0; i < chosenArguments.length; i++){
     var row = resultTable.addRow();
     for(var arg in [chosenArguments[i], unchosenArguments[i]]) {
-      row.addCell().text = arg.tweet;
+      TableCellElement cell = row.addCell()
+          ..text = arg.tweet;
+      if(arg.isRand){
+        cell.id = "random-argument";
+      }
     }
   }
 }
@@ -237,6 +247,7 @@ void writeResultsToFile(){
   var jsonData = {"chosen_args":[],
                   "unchosen_args":[]};
 
+  print("Unchosen: ${unchosenArguments}, Chosen:${chosenArguments}");
   for(var argument in chosenArguments){
     jsonData["chosen_args"].add(argument.toJsonMap());
   }
@@ -259,20 +270,35 @@ void requestArguments() {
   // Requests arguments from a local server running the Python spectrum scripts.
   addLoadingText("Sending response to server...");
   HttpRequest
-      .getString("http://127.0.0.1:5000/spectrum/${topic}")
-      .then((String jsonContents){
-        addLoadingText("Received responses.");
-        addLoadingText("Creating argument list...");
-        createArgumentLists(jsonDecode(jsonContents));
-        addLoadingText("Done.");
-        clearLoadingText();
-        setInstructions();
-        addArgumentRow();
+    .getString("http://127.0.0.1:5000/spectrum/${topic}")
+    .then((String jsonContents){
+      addLoadingText("Received responses.");
+      addLoadingText("Creating argument list...");
+      createArgumentLists(jsonDecode(jsonContents));
+      addLoadingText("Done.");
+      clearLoadingText();
+      setInstructions();
+      addArgumentRow();
   })
-      .catchError((Error error){
-    print(error.toString());
+    .catchError((Error error){
+      print(error.toString());
   });
   addLoadingText("Conntacting Twitter API...");
+}
+
+void requestRandomArgument(){
+  HttpRequest
+    .getString("http://127.0.0.1:5000/random/${topic}")
+    .then((String jsonContents){
+      print(jsonContents);
+      randomArgument = jsonToArgument(jsonDecode(jsonContents));
+      randomArgument.isRand = true;
+      print(randomArgument.toJsonMap());
+      requestArguments();
+  })
+    .catchError((Error error){
+      print(error.toString());
+  });
 }
 
 void createArgumentLists(var jsonArguments) {
@@ -282,30 +308,69 @@ void createArgumentLists(var jsonArguments) {
   arguments = new Map();
   // First element in the list is the number of arguments each side has.
   for(var jsonArgument in jsonArguments){
-    var argument = new Argument();
-    argument.tweet = jsonArgument["tweet"];
-    var support = jsonArgument["support"];
-    List<String> supportArgs = new List<String>();
-    for(var s in support){
-      supportArgs.add(s);
-    }
-    argument.support = supportArgs;
-    argument.class_prob = jsonArgument["class_prob"];
-    var word_probs_dict = jsonArgument["word_probs"];
-    var keys = word_probs_dict.keys.toList();
-    Map<String, double> word_probs = new Map();
-    for(var key in keys){
-      word_probs.putIfAbsent(key, () => word_probs_dict[key]);
-    }
-    argument.word_probs = word_probs;
+    var argument = jsonToArgument(jsonArgument);
 
-    arguments.putIfAbsent(argument.tweet, () => argument);
-    if(jsonArgument["negative"]){
-      argument.isNeg = true;
+    if(argument.isNeg){
       negativeArguments.add(argument);
     }else{
-      argument.isNeg = false;
       positiveArguments.add(argument);
     }
+
+    argument.isRand = false;
+    arguments.putIfAbsent(argument.tweet, () => argument);
   }
+  var random = new Random();
+  int randomIndex = random.nextInt(arguments.length);
+  var removedTweet = arguments.keys.elementAt(randomIndex);
+  var removedArg = arguments[removedTweet];
+  arguments.remove(removedTweet);
+
+  arguments.putIfAbsent(randomArgument.tweet, () => randomArgument);
+
+  var listRemoved;
+  if(removedArg.isNeg){
+    listRemoved = negativeArguments;
+  }
+  else{
+    listRemoved = positiveArguments;
+  }
+  var removedIndex = listRemoved.indexOf(removedArg);
+  listRemoved.removeAt(removedIndex);
+  listRemoved.insert(removedIndex, randomArgument);
+}
+
+Argument jsonToArgument(var jsonArgument){
+  var argument = new Argument();
+
+  // Text
+  argument.tweet = jsonArgument["tweet"];
+
+  // Is tweet negative.
+  if(jsonArgument["negative"]){
+      argument.isNeg = true;
+    }else{
+      argument.isNeg = false;
+  }
+
+  // Supporting arguments
+  var support = jsonArgument["support"];
+  List<String> supportArgs = new List<String>();
+  for(var s in support){
+    supportArgs.add(s);
+  }
+  argument.support = supportArgs;
+
+  // Class probability.
+  argument.class_prob = jsonArgument["class_prob"];
+
+  // Word probabilities.
+  var word_probs_dict = jsonArgument["word_probs"];
+  var keys = word_probs_dict.keys.toList();
+  Map<String, double> word_probs = new Map();
+  for(var key in keys){
+    word_probs.putIfAbsent(key, () => word_probs_dict[key]);
+  }
+  argument.word_probs = word_probs;
+
+  return argument;
 }
