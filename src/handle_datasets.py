@@ -17,6 +17,8 @@ AIRLINE_TWEETS_PATH = os.path.join(DATA_DIR, "airline_tweets.csv")
 JSON_PATH = os.path.join(DATA_DIR, "spectrum.json")
 TWITTER_ACCESS_PATH = os.path.join(DATA_DIR, "twitter_access")
 
+study_number = -1
+
 
 def anonymize_sentiment_tweets():
     """Read the original Stanford sentiment corpus file, anonymize it and write the simplified results to a new file."""
@@ -150,6 +152,10 @@ def get_dataset(topic):
     :param topic query used to search twitter.
     :return dataset on the topic ready for processing.
     """
+    print(topic)
+    topic = topic.lower()
+    topic = topic.replace(" ", "_")
+    print(topic)
     topic_path = os.path.join(DATA_DIR, "topics", topic)
     if os.path.isfile(topic_path):
         print(f"Reading local file from: {topic_path}")
@@ -202,21 +208,25 @@ def call_twitter_search(api, search_query, tweets_per_page, since_id, max_id):
     if max_id <= 0:
         if not since_id:
             new_tweets = api.search(q=search_query,
+                                    lang='en',
                                     count=tweets_per_page,
                                     tweet_mode="extended")
         else:
             new_tweets = api.search(q=search_query,
+                                    lang='en',
                                     count=tweets_per_page,
                                     tweet_mode="extended",
                                     since_id=since_id)
     else:
         if not since_id:
             new_tweets = api.search(q=search_query,
+                                    lang='en',
                                     count=tweets_per_page,
                                     tweet_mode="extended",
                                     max_id=str(max_id - 1))
         else:
             new_tweets = api.search(q=search_query,
+                                    lang='en',
                                     count=tweets_per_page,
                                     tweet_mode="extended",
                                     max_id=str(max_id - 1),
@@ -255,3 +265,12 @@ def save_dataset(topic):
     filename = os.path.join(DATA_DIR, "topics", topic.replace(" ", "_"))
     with open(filename, "w+") as file:
         json.dump(list(tweets), file)
+
+
+def save_results(results, filename):
+    directory = os.path.join(DATA_DIR, "results", f"study_{study_number}")
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    with open(os.path.join(directory, filename), "w+") as file:
+        json.dump(results, file)
