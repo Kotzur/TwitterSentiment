@@ -103,6 +103,14 @@ button{
 }
 
 #random-argument{
+  background-color: #9999ff;
+}
+
+#positive-result{
+  background-color: #99ff99;
+}
+
+#negative-result{
   background-color: #ff9999;
 }
 

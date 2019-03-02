@@ -208,6 +208,13 @@ void displayResultScreen(){
       if(arg.isRand){
         cell.id = "random-argument";
       }
+      if(chosenArguments.contains(arg)){
+        if(arg.isNeg) {
+          cell.id = "negative-result";
+        }else{
+          cell.id = "positive-result";
+        }
+      }
     }
   }
 }
