@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:html';
 import 'dart:math';
 
-InputElement topicInput;
+SelectElement topicInput;
 DivElement loading;
 ParagraphElement progress;
 DivElement instructions;
@@ -64,15 +64,18 @@ void changeTopic(Event e){
   // Responds to new topic choice.
   topic = topicInput.value;
   print("New topic: ${topic}");
+
   resultTable.children.clear();
   result.children.clear();
   argumentTable.children.clear();
   instructions.children.clear();
-  requestRandomArgument();
+  progress.text = "";
+
   chosenArguments = [];
   unchosenArguments = [];
   rowCount = 0;
   posScore = 0;
+  requestRandomArgument();
 }
 
 void makeSelection(Event e){
@@ -208,11 +211,13 @@ void displayResultScreen(){
       if(arg.isRand){
         cell.id = "random-argument";
       }
-      if(chosenArguments.contains(arg)){
-        if(arg.isNeg) {
-          cell.id = "negative-result";
-        }else{
-          cell.id = "positive-result";
+      else {
+        if (chosenArguments.contains(arg)) {
+          if (arg.isNeg) {
+            cell.id = "negative-result";
+          } else {
+            cell.id = "positive-result";
+          }
         }
       }
     }
@@ -241,9 +246,9 @@ void clearLoadingText(){
 
 void setInstructions(){
   studyDescription.id = "hidden";
-  instructions.children.add(new ParagraphElement()..text="1. Input a topic of interest and press Enter.");
+  instructions.children.add(new ParagraphElement()..text="1. Select a topic from the drop down menu.");
   instructions.children.add(new ParagraphElement()..text="2. At each step, select the tweet you agree with most.");
-  instructions.children.add(new ParagraphElement()..text="3. Hover over arguments to display their supporting tweets.");
+  instructions.children.add(new ParagraphElement()..text="3. Hover over arguments to display their context tweets.");
 }
 
 void writeResultsToFile(){
