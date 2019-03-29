@@ -12,10 +12,6 @@
 - Sentiment analysis:
     1. ["Twitter Sentiment Classification using Distant Supervision"](https://cs.stanford.edu/people/alecmgo/papers/TwitterDistantSupervision09.pdf) Go, A. Bhayani R. Huang, L. Stanford University
     2. ["Twitter Sentiment Analysis: a review"](https://www.ijser.org/paper/Twitter-Sentiment-Analysis-A-Review.html)
-    3. ["Multiple Instance Learning Networks for Fine-Grained Sentiment Analysis"](https://arxiv.org/pdf/1711.09645.pdf) Angelidis, S. Lapata, M. Transactions of the Association for Computational Linguistics, 2018, vol 6, 17-31
-    4. ["Sentiment Analysis on Twitter Data"](http://www.cs.columbia.edu/~julia/papers/Agarwaletal11.pdf) Agarwal, A. Xie, B. Columbia University
-    5. ["Sentiment Analysis on Twitter"](https://www.ijcsi.org/papers/IJCSI-9-4-3-372-378.pdf) Kumar, A. Sebastian, T. M. Delhi Technological University, IJCSI, 2012, Vol. 9
-    6. ["Thumbs up? Sentiment Classification using Machine Learning Techniques"](https://www.cs.cornell.edu/home/llee/papers/sentiment.pdf) Pang, B. Lee, L. Vaithyanathan, S. Proceedings of EMNLP 2002 79-86
 
 ## Papers read ##
 ## Fake news and ideological polarization ##
@@ -64,3 +60,98 @@ I.e. the profiles a user is shown are either profiles followed by many of user's
     2. Rescoring: apply an ML model to the candidate list. It's just a binary classification problem. The models are learned using the Pig-based framework. Logistic regression classifiers are trained using stochastic gradient descent in a single pass.
 
 Recommendation information is used in search, content discovery, static priors in ranking etc.
+
+## Thumbs up? Sentiment Classification using Machine Learning Techniques ##
+["Thumbs up? Sentiment Classification using Machine Learning Techniques"](https://www.cs.cornell.edu/home/llee/papers/sentiment.pdf) Pang, B. Lee, L. Vaithyanathan, S. Proceedings of EMNLP 2002 79-86
+
+- Prev research focused on __topical categorisation__
+- Growth in on-line discussion groups and review sites -> sentiment categorisation.
+- __Sentiment definition__: overall opinion towards the subject matter
+- Paper focus: machine learning techniques to the sentiment classification problem.
+- Challenges: more subtle than topic, require more understanding.
+- Related research areas: source style, genre classification, sent. classification at least partially knowledge-based using linguistic heuristics or seed words. Closest prev research: unsupervised learning based on words "excellent" and "poor"
+- Data: movie reviews. Good because have rating indicator
+- Results applicable to other domains as long as __sufficient training data exists__
+- Expert hypothesis: relatively low performance for automatic sentiment classification (relative to other text categorisation).
+- Human-based classifiers: 58% and 64%, human-based + data analysis: 69%. So __baseline__ is 69%.
+- Test NB, MaxEntr and SVM because they were successful in prev classifciers.
+- Count vector to represent documents.
+- Removing the negation tag had negligable, slightly harmful effect
+- Features used: unigrams (occuring at least 4 times), top bigrams.
+- Surpass random choice and human-based results
+- Topic-based classifiers achiver 90% and above for particular categories with more than two classes -> sentiment anal more difficult than topic classification
+- Tried improvements:
+  - __feature frequence vs presence__: binarise the document vector. Much better performance. Opposite result to topic classification - difference.
+  - __bigrams__: using uni + bi violates independence assumption of NB but doesn't imply NB will have poorer performance. For NB, uni+bi had negl. effect. If context is important, bigrams are not good at capturing it.
+  - __POS tagging:__ word sense disambiguation. Improves perf slightly for NB but declines for SVM. Focus on adjectives - poor. But using fewer unigrams = acc when using all of them -> applying explicit feature-selection on unigrams could improve performance.
+  - __Position__: position of sentiment in the text -> different meaning. But actually doesn't amke a difference, maybe need more refinement in text position.
+- Relative performance: NB worst, SVM best.
+- Not as good as topic categorisation.
+- Unigram presence most effective, consistently better performance
+- thwarted expectations narrative: thought it'll be great but wasn't.
+- many words indicative of the opposite sentiemnt - discourse analysis necessary to decide when the author is talking about the film itself -> next step is whether sentences are on topic or not.
+
+## Sentiment Analysis on Twitter Data ##
+["Sentiment Analysis on Twitter Data"](http://www.cs.columbia.edu/~julia/papers/Agarwaletal11.pdf) Agarwal, A. Xie, B. Columbia University
+
+- Introduce Twitter like the reader never heard about it: social networking and microblog, tweets 140/280 characters, acronyms, spelling mistakes, emoticons.
+- Define: emoticons, target (reference), hashtag (topic)
+- Three models all running on SVMs: unigram model (baseline), feature based model and tree kernel based model
+- Design their own features called senti-features
+- Feature based model with 100 features acc == acc of unigram with 10k features.
+- Combinations of uni + features or uni + tree kernels outperform baseline.
+- Twitter specific features marginally add value.
+- Most important __combine prior polarity of words with their parts-of-speech tags__.
+- Twitter API: gives actual tweets in terms of language and content
+- Can get from them hand annotated dict of emojis and 5000 frequently used acronyms
+- Data collection based on search queries is biased (they provide part of their data which is not)
+- Preprocess:
+  - emoticons -> polarity
+  - urls -> url tag
+  - targets -> target tags
+  - negations -> negation tag
+  - repeated characters -> three characters
+  - Stanford tokenizer -> tokens
+  - stop words -> mark as stop word
+  - found in WordNet -> mark as english word
+- Use prior polarity dictionary DAL and if word not found, use WordNet to find synonyms.
+- Partial tree kernels: calculate similarity between trees by comparing all possible subtrees -> captures all possible correlations between features and categories. Takes a subtree and finds every possible combination of all or some of its elements.
+- Kernel attempts to use full information, abstracts away from specific information
+- Combining unigrams with senti-features best 2-class classification (4.04% gain over hard unigram baseline)
+- All features other than prior polarity of part of speech have marginal role.
+- URLs tend to be possitive (also in Go et al 2009), emoticons appear important
+- Less data -> unigrams are a critical disadvantage
+- Best performing system: combination of tree kernel with senti-features (4.25% gain over unigram baseline - same as 2-way class)
+- Conclusion: Twitter not that diff from other genres
+- Future work: parsing, semantic analysis, topic modelling
+
+## Sentiment Analysis on Twitter ##
+["Sentiment Analysis on Twitter"](https://www.ijcsi.org/papers/IJCSI-9-4-3-372-378.pdf) Kumar, A. Sebastian, T. M. Delhi Technological University, IJCSI, 2012, Vol. 9
+
+- Hybrid approach: corpus based + dictionary based methods
+- Twitter:
+  - Microblogging valuable source of people's opinons: different people
+  - Corpus can be arbitrarily large
+  - Differnt social and interests groups
+  - Many countries
+- NB works much better than MaxEntr (Parikh and Movassate)
+- Emoticons as fuzzy lables (Go et al and Read): NB, MaxEnt, SVM with unigrams, bigrams and POS = SVM + unigrams
+- Objective positive and negative tweet class (Pak and Paroubek)
+- 60 mil tweet dataset trained showed stochastic gradient descent is best (Batra and Rao)
+- Features that combine prior polarity of words with their pos are most important (Agarwal et al)
+- Hybrid: dicrionary + corpus based approach NLP + ML algorithms
+- twitter unique characteristics:
+  - message length
+  - writing technique: cyber slang, spelling, acronyms, emoticons
+  - availability
+  - topics
+  - real time
+- terminology:
+  - emoticons: facial expression representation
+  - target: refer
+  - hash tags: topic
+  - special symbols: rt - repeat
+- architecture: extract opinon words, find their orientation. Adjectives and verbs+adverbs. Corpus based method - find the semantic orientation of adjectives. Dictionary based method to find semantic orientation of verbs and adverbs. Calculate overall tweet sentiment through linear equation with emotion intensifiers (punctuation, repetition)
+- describe preprocessing
+- adjective: domain specific, use corpus, verbs: not domain specific, use seedlist + synonyms from wordnet)
+- no results reported in the paper???

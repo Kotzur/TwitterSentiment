@@ -209,7 +209,7 @@ TODO:
 
   | Start date  | End date  | Description| Milestones  |  Done? |
   |---|---|-----------------------  |---------|---|
-  | 22/10/2018 | 02/11/2018  | Read papers on sentiment analysis, the filter bubble phonomenon and Twitter content suggestion algorithms.  | Background knowledge to start implementation.  | More or less |
+  | 22/10/2018 | 02/11/2018  | Read papers on sentiment analysis, the filter bubble phonomenon and Twitter content suggestion algorithms.  | Background knowledge to start implementation.  | Yes |
   | 05/11/2018  | 09/11/2018  | Create 20 designs for the interface. Pre-process data.  | 20 design concepts. Datasets ready.  | Yes |
   | 12/11/2018  | 16/11/2018  | Implement bag-of-words classifier. Chose the design.  | Bag-of-words classifier ready.  | Yes |
   | 19/11/2018  | 23/11/2018  | Implement Naive Bayes classifier. Perform cross-validation.  | Naive Bayes classifier. Results from model evaluations.  | Yes |
@@ -218,14 +218,14 @@ TODO:
   | 10/12/2018  | 19/12/2018  | Link the interface with the model.  | Working program ready to use in user studies.  | Yes. |
   | 26/12/2018  | 05/01/2019  | Write introduction and preparation sections.  | Introduction and Preparation.  | Draft and outline. |
   | 07/01/2019  | 12/01/2019  | Extra time. Make sure all notes are well organized.	  | Clear notes. 	  | --- |
-  | 14/01/2019  | 18/01/2019  | Design user studies. Recruit subjects for user studies. Use this as buffer time or work on extensions.  | Interview questions and user studies plan. A list of people that will participate in the user studies.  | Study plan. |
-  | 21/01/2019  | 25/01/2019  | Run two user study pilots. Work on the progress report and presentation.  | Corrected plan for user studies based on the pilots. Draft report and presentation.  | Finished report. Study plan and pilots in progress. |
+  | 14/01/2019  | 18/01/2019  | Design user studies. Recruit subjects for user studies. Use this as buffer time or work on extensions.  | Interview questions and user studies plan. A list of people that will participate in the user studies.  | Yes |
+  | 21/01/2019  | 25/01/2019  | Run two user study pilots. Work on the progress report and presentation.  | Corrected plan for user studies based on the pilots. Draft report and presentation.  | Yes |
   | 28/01/2019  | 01/02/2019  | Prepare the progress report and the presentation.  | Submitted progress report (01/02/2019)  | Yes |
-  | 04/02/2019  | 15/02/2019  | Run user studies.  | Recordings and notes from the user studies.  | Haven't started, still finalising plans and pilots. |
-  | 18/02/2019  | 22/02/2019  | Extra time.  |   |   |
-  | 25/02/2019  | 01/03/2019  | Gather results from the user studies, perform interview coding, create graphs evaluating the data.  | Statistically analysed interview data, evaluation data ready.  |   |
-  | 04/03/2019  | 08/03/2019  | Write implementation section.  | Implementation  |   |
-  | 11/03/2019  | 15/03/2019  | Write evaluation section.  | Evaluation  |   |
+  | 04/02/2019  | 15/02/2019  | Run user studies.  | Recordings and notes from the user studies.  | Yes |
+  | 18/02/2019  | 22/02/2019  | Extra time.  |   | --- |
+  | 25/02/2019  | 01/03/2019  | Gather results from the user studies, perform interview coding, create graphs evaluating the data.  | Statistically analysed interview data, evaluation data ready.  | Results gathered. |
+  | 04/03/2019  | 08/03/2019  | Write implementation section.  | Implementation  | Nop |
+  | 11/03/2019  | 15/03/2019  | Write evaluation section.  | Evaluation  | Nop |
   | 18/03/2019  | 30/03/2019  | Finish writing dissertation.  | First draft ready.  |   |
   | 01/03/2019  | 19/04/2019  | Extra time  |   |   |
   | 22/04/2019  | 17/05/2019  | Proofreading, corrections and early submission if possible.  | Submitted dissertation.  | No  |
