@@ -5,7 +5,7 @@
 pipenv run python server.py -s $1 &
 
 # Host the interface
-URL="$PWD/interface/build/index.html"
+URL="$PWD/dart_interface/build/index.html"
 #if which xdg-open > /xdev/null
 #then
 #  echo "xdg"

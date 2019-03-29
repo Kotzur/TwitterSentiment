@@ -1,9 +1,7 @@
 import argparse
-import json
-import os
 import random
 
-import handle_datasets
+from utils import handle_datasets
 from sentiment_spectrum import SentimentSpectrum
 
 from flask import Flask

@@ -1,5 +1,5 @@
 from sentiment_spectrum import SentimentSpectrum
-import handle_datasets
+from utils import handle_datasets
 
 
 class Cli(object):

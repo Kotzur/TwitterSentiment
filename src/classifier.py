@@ -3,12 +3,11 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.pipeline import Pipeline
 from sklearn.svm import SVC
 
-import handle_datasets
 from enum import Enum
 
 import pickle
 
-import metrics
+from utils import metrics, handle_datasets
 
 
 class Type(Enum):

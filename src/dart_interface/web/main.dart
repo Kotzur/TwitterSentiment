@@ -195,10 +195,10 @@ void displayResultScreen(){
   argumentTable.children.clear();
   result.children.add(new ParagraphElement()
                         ..text = "Topic: ${topic}");
-  result.children.add(new ParagraphElement()
-                        ..text = "Positive choices: ${posScore}");
-  result.children.add(new ParagraphElement()
-                        ..text = "Negative choices: ${rowCount-posScore}");
+//  result.children.add(new ParagraphElement()
+//                        ..text = "Positive choices: ${posScore}");
+//  result.children.add(new ParagraphElement()
+//                        ..text = "Negative choices: ${rowCount-posScore}");
   resultTable.addRow()
     ..addCell().text = "Chosen tweet"
     ..addCell().text = "Not chosen tweet";

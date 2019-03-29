@@ -8,7 +8,7 @@ import tweepy
 
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-DATA_DIR = os.path.join(ROOT_DIR, "..", "data")
+DATA_DIR = os.path.join(ROOT_DIR, "..", "..", "data")
 SENTIMENT_TWEETS_PATH = os.path.join(DATA_DIR, "sentiment_tweets.csv")
 ANONYMOUS_SENTIMENT_TWEETS_PATH = os.path.join(DATA_DIR, "anonymous_sentiment_tweets.csv")
 SMALL_DATASET_PATH = os.path.join(DATA_DIR, "small_dataset.csv")

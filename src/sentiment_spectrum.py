@@ -1,6 +1,6 @@
 import random
 
-import handle_datasets
+from utils import handle_datasets
 from classifier import Classifier
 from classifier import Type
 import pickle
@@ -18,10 +18,11 @@ class Argument:
 
 
 class SentimentSpectrum(object):
-    def __init__(self, build_new=False, word_probs=True):
+    def __init__(self, build_new=False, word_probs=True, svm=False):
         """Represents a spectrum of Tweets from most negative to most positive on a specific topic.
         :param build_new boolean whether to retrain and pickle a classifier before loading it."""
         self.word_probs = word_probs
+        self.svm = svm
         if build_new:
             self.build_classifier()
 
@@ -37,8 +38,15 @@ class SentimentSpectrum(object):
 
     def build_classifier(self):
         """Create a new classifier and pickle it."""
-        dataset = handle_datasets.load_anonymized_sentiment_tweets(small=False)
-        classifier = Classifier(unigrams=True, bigrams=False, classifier_type=Type.NB)
+        if self.svm:
+            dataset = handle_datasets.load_anonymized_sentiment_tweets(small=True)
+        else:
+            dataset = handle_datasets.load_anonymized_sentiment_tweets(small=False)
+        print("Building classifier")
+        if self.svm:
+            classifier = Classifier(unigrams=True, bigrams=True, tfidf=True, classifier_type=Type.SVM)
+        else:
+            classifier = Classifier(unigrams=True, bigrams=True, tfidf=True, classifier_type=Type.NB)
         classifier.train_and_pickle(dataset)
 
     def create_spectrum(self, tweets):
@@ -47,7 +55,13 @@ class SentimentSpectrum(object):
         them.
         :param tweets set of unlabelled strings
         """
-        prediction_probabilities = self.classifier.predict_proba(tweets)
+        print("Predicting probabilities")
+        if self.svm:
+            prediction_probabilities = self.classifier.decision_function(tweets)
+            print(prediction_probabilities)
+        else:
+            prediction_probabilities = self.classifier.predict_proba(tweets)
+        print("Predicting classes")
         sentiments = self.classifier.predict(tweets)
         confidences = [max(probs) for probs in prediction_probabilities]
         negatives = []

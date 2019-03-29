@@ -1,8 +1,6 @@
 import argparse
-import getopt
-import sys
 
-from handle_datasets import save_dataset
+from utils.handle_datasets import save_dataset
 
 
 def generate_datasets(topics):
